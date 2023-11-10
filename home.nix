@@ -116,7 +116,7 @@ in
     ".config/kitty/kitty.conf".source = ./config/kitty/kitty.conf;
     ".config/neofetch/config.conf".source = ./config/neofetch/config.conf;
     # ".config/rofi/config.rasi".source = ./config/rofi/config.rasi;
-    ".local/share/rofi/themes/main.rasi".source = ./config/rofi/catppuccin-mocha.rasi;
+    ".local/share/rofi/themes/main.rasi".source = ./config/rofi/mocha.rasi;
 
     # Disable middle click paste
     # See [https://unix.stackexchange.com/a/277488]

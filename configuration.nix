@@ -6,9 +6,9 @@
 
 {
   imports =
-    [ # Include the results of the hardware scan.
+    [
       ./hardware-configuration.nix
-      ./desktop/xmonad.nix
+      ./xmonad.nix
     ];
 
   #=============== BOOT ==============#
@@ -169,7 +169,7 @@
   users.users.rec1dite = {
     isNormalUser = true;
     description = "Rec1dite";
-    extraGroups = [ "networkmanager" "wheel" "audio" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "mlocate" ];
     packages = with pkgs; [];
   };
 
@@ -182,14 +182,17 @@
     vim
 
     #== System utils ==#
+    bottom
     file
     git
     gparted
     htop
     kitty
     lshw
+    mpv
     neofetch
     pciutils
+    sxiv
     wget
 
     #== System config ==#
@@ -202,6 +205,7 @@
     #== Compilation ==#
     gcc
     gnumake
+    python3 # See [https://nixos.wiki/wiki/Python]
 
     #== Navigation ==#
     dmenu
@@ -211,10 +215,14 @@
 
     #== Desktop applications ==#
     blender
+    discord
     firefox
     imagemagick7
     neofetch
     vscode
+    youtube-music
+    cava
+    # fish
   ];
 
 
@@ -226,4 +234,13 @@
   #   enable = true;
   #   enableSSHSupport = true;
   # };
+
+  services.locate = {
+    enable = true;
+    locate = pkgs.mlocate;
+  };
+
+  programs.slock = {
+    enable = true;
+  };
 }

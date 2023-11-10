@@ -12,7 +12,21 @@
       nixlib = nixpkgs.lib;
       hmlib = home-manager.lib;
       system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      # pkgs = nixpkgs.legacyPackages.${system};
+
+      # Create overlay to allow unfree packages
+      allowUnfreeOverlay = final: prev: {
+        nixpkgs.config = prev.nixpkgs.config // {
+          allowUnfree = true;
+        };
+      };
+
+      # Apply overlay to packages
+      pkgs = import nixpkgs {
+        inherit system;
+        overlays = [ allowUnfreeOverlay ];
+      };
+
     in {
     nixosConfigurations = {
       n1x = nixlib.nixosSystem {

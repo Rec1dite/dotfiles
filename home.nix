@@ -1,7 +1,18 @@
 # See [https://youtu.be/IiyBeR-Guqw]
 
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
+let
+  desktopEntries = [ 
+    "discord"
+    "todoist"
+    "whatsapp"
+    "chatgpt"
+    "gmail"
+    "github"
+    "clickup"
+  ];
+in
 {
   #=============== HOME MANAGER ==============#
   # Specify user information
@@ -14,27 +25,41 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-
   #=============== USER SOFTWARE ==============#
   # Install Nix packages only in the local user environment
   home.packages = with pkgs; [
-    # pkgs.hello
-
-    # # It is sometimes useful to fine-tune packages, for example, by applying
-    # # overrides. You can do that directly here, just don't forget the
-    # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
-    # # fonts?
+    # To override settings for packages defined in configuration.nix:
     # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
     #== Custom shell scripts ==#
+    (pkgs.writeShellScriptBin "discord-web" ''firefox --new-window "https://discord.com/app"'')
+    (pkgs.writeShellScriptBin "todoist" ''firefox --new-window "https://todoist.com/app"'')
+    (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
+    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground"'')
+    (pkgs.writeShellScriptBin "gmail" ''firefox --new-window "https://mail.google.com"'')
+    (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/Rec1dite"'')
+    (pkgs.writeShellScriptBin "clickup" ''firefox --new-window "https://clickup.up.ac.za"'')
+    (pkgs.writeShellScriptBin "easywifi" ''python3 ~/.dotfiles/scripts/easywifi/easywifi.py'')
     (pkgs.writeShellScriptBin "slay" ''
-      echo "Hello, ${config.home.username}!"
-    '') # TODO: slay
+      CHOSENLAYOUT=$(ls /home/rec1dite/.screenlayout | dmenu -p 'ᐒ' -fn 'Fira Code:pixelsize=14' -sb '#f43e5c' -sf '#1e1e2e' -nb '#1e1e2e' -nf '#bac2de')
+
+      if [ "$CHOSENLAYOUT" ]; then
+        /home/rec1dite/.screenlayout/$CHOSENLAYOUT
+      fi
+    '')
   ];
 
-
   #=============== DOTFILES ==============#
-  home.file = {
+  home.file = let
+    # Generate .desktop entries
+    desktopFiles = builtins.listToAttrs (map (
+      name: {
+        name = ".local/share/applications/${name}.desktop";
+        value = { source = ./applications + "/${name}.desktop"; };
+      }
+    ) desktopEntries);
+  in
+  {
     # To copy a config verbatim into the Nix store and use that:
     # ".config/someProg/someProg.conf".source = ./someProg_new.conf;
     # OR to enter the config content directly:
@@ -42,13 +67,8 @@
     #   EXAMPLE_CONF = "Your conf here"
     # '';
 
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-  };
-
+    ".config/xmonad/xmonad.hs".source = ./config/xmonad/xmonad.hs;
+  } // desktopFiles;
 
   #=============== SHELL ==============#
   # You can also manage environment variables but you will have to manually

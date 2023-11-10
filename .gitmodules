@@ -1,0 +1,3 @@
+[submodule "scripts/easywifi"]
+	path = scripts/easywifi
+	url = https://github.com/NoahCristino/easywifi

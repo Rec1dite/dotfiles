@@ -1,0 +1,12 @@
+[Desktop Entry]
+Categories=AudioVideo;Network
+Comment=Whatsapp
+Exec=whatsapp
+GenericName=Messenger
+Icon=whatsapp
+Name=Whatsapp
+Terminal=false
+TryExec=whatsapp
+Type=Application
+Keywords=Social;Messages
+MimeType=text/plain

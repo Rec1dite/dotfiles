@@ -1,0 +1,5 @@
+#!/bin/bash
+
+for outp in {eDP,DP-1-0}; do
+	xrandr --output $outp --brightness $1;
+done

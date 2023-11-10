@@ -31,6 +31,12 @@
   # Leave as-is
   system.stateVersion = "23.05";
 
+
+  #=============== SYSTEM ==============#
+  # Enable upower
+  services.upower.enable = true;
+  systemd.services.upower.enable = true;
+
   #=============== NETWORKING ==============#
   networking.hostName = "n1x"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -51,6 +57,7 @@
 
   #=============== XORG ==============#
   services.xserver = {
+    enable = true;
     # Configure keymap in X11
     layout = "za";
     xkbVariant = "";
@@ -58,9 +65,14 @@
     # Configure input devices
     libinput = {
       enable = true;
-      mouse = {};
+
+      mouse = {
+        # See [https://unix.stackexchange.com/a/487975]
+        # buttonMapping = "1 0 3"; # Disable middle mouse
+      };
       touchpad = {
         naturalScrolling = true;
+        disableWhileTyping = true;
       };
     };
 
@@ -195,6 +207,11 @@
     sxiv
     wget
 
+    # For disabling middle click paste
+    xbindkeys
+    xdotool
+    xsel
+
     #== System config ==#
     arandr
     nitrogen
@@ -219,12 +236,18 @@
     firefox
     imagemagick7
     neofetch
-    vscode
+    # vscode # Now managed by home-manager
     youtube-music
     cava
+    xournalpp
+    okular
     # fish
   ];
 
+  #=============== ADDITIONAL INITIALIZATION ==============#
+  environment.extraInit = ''
+    unset -v SSH_ASKPASS
+  '';
 
   #=============== MISC ==============#
   # Some programs need SUID wrappers, can be configured further or are
@@ -235,9 +258,13 @@
   #   enableSSHSupport = true;
   # };
 
+  # Disable AskPass (annoying GUI pop-up when Git asks for credentials)
+  programs.ssh.askPassword = "";
+
   services.locate = {
     enable = true;
     locate = pkgs.mlocate;
+    localuser = null;
   };
 
   programs.slock = {

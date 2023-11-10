@@ -1,3 +1,6 @@
 [submodule "scripts/easywifi"]
 	path = scripts/easywifi
 	url = https://github.com/NoahCristino/easywifi
+[submodule "config/youtube-music/catppuccin"]
+	path = config/youtube-music/catppuccin
+	url = https://github.com/catppuccin/youtubemusic

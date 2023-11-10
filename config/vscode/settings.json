@@ -1,0 +1,195 @@
+{
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook",
+        "*.txt": "default",
+        "*.pdf": "latex-workshop-pdf-hook",
+        "git-rebase-todo": "gitlens.rebase"
+    },
+    "workbench.colorTheme": "Catppuccin Mocha",
+    "editor.lineNumbers": "relative",
+    "C_Cpp.updateChannel": "Insiders",
+    "vim.handleKeys": {
+        "<C-b>": false,
+    },
+    "editor.suggestSelection": "first",
+    "editor.cursorSmoothCaretAnimation": "on",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    },
+    "workbench.editor.untitled.hint": "hidden",
+    "cmake.configureOnOpen": true,
+    "[xml]": {
+        "editor.defaultFormatter": "redhat.vscode-xml"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "redhat.telemetry.enabled": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "blender.executables": [
+        {
+            "path": "c:\\Program Files\\Blender Foundation\\Blender 2.93\\blender.exe",
+            "name": "",
+            "isDebug": false
+        }
+    ],
+    "blender.scripts.directories": [
+        {
+            "path": "c:\\Users\\Rec1dite\\Desktop\\blender_scripts",
+            "name": ""
+        }
+    ],
+    "python.autoComplete.extraPaths": [
+        "c:\\Program Files\\Blender Foundation\\pypredef"
+    ],
+    "python.analysis.extraPaths": [
+        "c:\\Program Files\\Blender Foundation\\pypredef"
+    ],
+    "html.autoClosingTags": false,
+    "powermode.enabled": true,
+    "powermode.enableShake": false,
+    "powermode.comboThreshold": 50,
+    "powermode.explosionOffset": 0,
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\robocode\\libs\\robocode.jar"
+    ],
+	"java.configuration.runtimes": [
+    ],
+
+    "hexeditor.columnWidth": 32,
+    "hexeditor.showDecodedText": true,
+    "vsicons.dontShowNewVersionMessage": true,
+    "glassit.alpha": 255,
+    "[html]": {
+        "editor.defaultFormatter": "vscode.html-language-features"
+    },
+    "vim.foldfix": true,
+    "vim.easymotion": true,
+    "files.associations": {
+        "*.js": "javascript",
+        ".greeble": "coffeescript",
+        "*.y": "yacc"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+    "editor.fontFamily": "Fira Code, Hack Nerd Font, Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "terminal.integrated.scrollback": 30000,
+    "editor.bracketPairColorization.enabled": false,
+    "material-icon-theme.showWelcomeMessage": false,
+    "hediet.vscode-drawio.codeLinkActivated": false,
+    "notebook.lineNumbers": "on",
+    "[markdown]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "workbench.panel.defaultLocation": "right",
+    "npm.keybindingsChangedWarningShown": true,
+    "editor.stickyScroll.enabled": true,
+    "vim.highlightedyank.enable": true,
+    "vim.showMarksInGutter": true,
+    "vim.sneak": true,
+    "scm.defaultViewMode": "tree",
+    "git.mergeEditor": true,
+    "editor.renderWhitespace": "none",
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.cursorSurroundingLines": 5,
+    "editor.wordWrap": "on",
+    "catppuccin.accentColor": "red",
+    "catppuccin.colorOverrides": {
+
+        "mocha": {
+            // "rosewater":"",
+            // "flamingo":"",
+            // "pink":"",
+            // "mauve":"",
+            "red": "#f43e5c",
+            // "maroon":"",
+            // "peach":"",
+            "yellow":"#fac29a",
+            // "green":"",
+            // "teal":"",
+            // "sky":"",
+            // "sapphire":"",
+            // "blue":"",
+            // "lavender":""
+        }
+    },
+    "[javascriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "vim.camelCaseMotion.enable": true,
+    "editor.accessibilitySupport": "off",
+    "[python]": {
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "python.condaPath": "$HOME/.anaconda3/bin/conda",
+    "git.openRepositoryInParentFolders": "always",
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+        "COBOL": true,
+        "COBOLIT": true,
+        "ACUCOBOL": true,
+        "COBOL_MF_LISTFILE": false,
+        "COBOL_PCOB_LISTFILE": false,
+        "COBOL_ACU_LISTFILE": false,
+        "COBOL_MF_PREP": false,
+        "mfu": false,
+        "utreport": false,
+        "*": true,
+        "plaintext": false,
+        "markdown": true,
+        "scminput": false,
+        "yaml": false,
+        "python": true,
+        "html": true
+    },
+    "svelte.enable-ts-plugin": true,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "java.imports.gradle.wrapper.checksums": [
+        {
+            "sha256": "1fca1b1af7c3ed6cb9059346aaa89179c82abf11252837115e546c4da38e8b0c",
+            "allowed": true
+        },
+        {
+            "sha256": "381dff8aa434499aa93bc25572b049c8c586a67faff2c02f375e4f23e17e49de",
+            "allowed": true
+        }
+    ],
+    "hediet.vscode-drawio.resizeImages": null,
+    "hediet.vscode-drawio.theme": "dark",
+    "githubPullRequests.pullBranch": "never",
+    "[svelte]": {
+        "editor.defaultFormatter": "svelte.svelte-vscode"
+    },
+    "hexeditor.defaultEndianness": "little",
+    "hexeditor.inspectorType": "aside",
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "window.commandCenter": false,
+    "explorer.autoReveal": false,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "[FortranFreeForm]": {
+        "editor.defaultFormatter": "fortran-lang.linter-gfortran"
+    },
+    "window.zoomLevel": -1,
+    "[haskell]": {
+        "editor.defaultFormatter": "haskell.haskell"
+    },
+    "explorer.confirmDragAndDrop": false
+}

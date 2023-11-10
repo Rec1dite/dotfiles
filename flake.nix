@@ -9,36 +9,37 @@
 
   outputs = { self, nixpkgs, home-manager, ... }:
     let
-      nixlib = nixpkgs.lib;
-      hmlib = home-manager.lib;
       system = "x86_64-linux";
-      # pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = nixpkgs.legacyPackages.${system};
 
       # Create overlay to allow unfree packages
-      allowUnfreeOverlay = final: prev: {
-        nixpkgs.config = prev.nixpkgs.config // {
-          allowUnfree = true;
+      # allowUnfreeOverlay = final: prev: {
+      #   nixpkgs.config = prev.nixpkgs.config // {
+      #     allowUnfree = true;
+      #   };
+      # };
+
+      # Apply overlay to packages
+      # pkgs = import nixpkgs {
+      #   inherit system;
+      #   overlays = [ allowUnfreeOverlay ];
+      # };
+
+    in {
+      # nixpkgs.config.allowUnfree = true;
+
+      nixosConfigurations = {
+        n1x = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [ ./configuration.nix ];
         };
       };
 
-      # Apply overlay to packages
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [ allowUnfreeOverlay ];
+      homeConfigurations = {
+        rec1dite = home-manager.lib.homeManagerConfiguration {
+          inherit pkgs;
+          modules = [ ./home.nix ];
+        };
       };
-
-    in {
-    nixosConfigurations = {
-      n1x = nixlib.nixosSystem {
-        inherit system;
-        modules = [ ./configuration.nix ];
-      };
-    };
-    homeConfigurations = {
-      rec1dite = hmlib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./home.nix ];
-      };
-    };
   };
 }

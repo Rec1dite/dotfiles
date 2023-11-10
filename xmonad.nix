@@ -5,14 +5,13 @@
 
   services.dbus = {
     enable = true;
+    # packages = [ pkgs.gnome3.dconf ];
     packages = [];
   };
 
+  # (Also configured directly in configuration.nix)
   services.xserver = {
     enable = true;
-
-    layout = "za";
-    xkbVariant = "";
 
     displayManager.defaultSession = "none+xmonad";
 
@@ -20,6 +19,17 @@
     windowManager.xmonad = {
       enable = true;
       enableContribAndExtras = true;
+
+      extraPackages = haskpkgs: [
+        haskpkgs.dbus
+        haskpkgs.monad-logger
+        haskpkgs.xmonad-contrib
+      ];
+
+      config = ./config/xmonad/xmonad.hs;
+
+      # Redefine CapsLock behaviour
+      # xkbOptions = "caps:ctrl_modifier";
 
       # ghcArgs = [
       #   "-hidir /tmp"		# Place interface files in /tmp so GHC doesn't try to write them to the Nix store

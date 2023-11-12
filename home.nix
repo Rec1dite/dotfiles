@@ -43,11 +43,13 @@ in
   #=============== USER SOFTWARE ==============#
   # Install Nix packages only in the local user environment
   home.packages = with pkgs; [
+    dconf # See [https://github.com/nix-community/home-manager/issues/3113#issuecomment-1194271028]
+
     # To override settings for packages defined in configuration.nix:
     # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
     #== Custom shell scripts ==#
-    (pkgs.writeShellScriptBin "discord-web" ''firefox --new-window "https://discord.com/app"'')
+    (pkgs.writeShellScriptBin "discord" ''firefox --new-window "https://discord.com/app"'')
     (pkgs.writeShellScriptBin "todoist" ''firefox --new-window "https://todoist.com/app"'')
     (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
     (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground"'')
@@ -65,10 +67,37 @@ in
   ];
 
   programs = {
+    #===== GIT =====#
+    git = {
+      enable = true;
+      userName = "Rec1dite";
+      userEmail = "rec1dite@gmail.com";
+
+      aliases = {
+        graph = "";
+      };
+      # lfs.enable = true;
+
+      # Configure git delta [https://github.com/dandavison/delta]
+      delta = {
+        enable = true;
+        options = {
+          # decorations = {
+          #   commit-decoration-style = "bold yellow box ul";
+          #   file-decoration-style = "none";
+          #   file-style = "bold yellow ul";
+          # };
+          # features = "decorations";
+          # whitespace-error-style = "22 reverse";
+        };
+      };
+    };
+
     #===== ROFI =====#
     rofi = {
       enable = true;
       # font = "monospace";
+      theme = "main";
     };
 
     #===== VSCODE =====#
@@ -91,8 +120,22 @@ in
         theme = "base16"; # $ bat --list-themes
       };
     };
+    # TODO: trayer, bat-extras
+  };
 
-    # TODO: Trayer, Polybar
+  services = {
+    polybar = {
+      enable = true;
+      # package = pkgs.polybar.override {
+      #   alsaSupport = true;
+      #   githubSupport = true;
+      #   mpdSupport = true;
+      #   pulseSupport = true;
+      #   i3GapsSupport = true;
+      # };
+      config = ./config/polybar/config.ini;
+      script = "polybar top &";
+    };
   };
 
   #=============== DOTFILES ==============#
@@ -147,9 +190,44 @@ in
 
   #=============== RICE ==============#
   #===== GTK =====#
+  # See [https://youtu.be/m_6eqpKrtxk]
   gtk = {
     enable = true;
+    font.name = "Fira Code";
+
+    cursorTheme = {
+      package = pkgs.bibata-cursors;
+      name = "Bibata-Modern-Ice";
+      size = 10;
+    };
+
+    theme = {
+      name = "Catppuccin-Mocha-Compact-Blue-Dark";
+      package = pkgs.catppuccin-gtk.override {
+        accents = [ "blue" ];
+        size = "compact";
+        tweaks = [];
+        variant = "mocha";
+      };
+    };
   };
+
+  #===== CURSOR =====#
+  # home.pointerCursor = let
+  #   getFrom = url: hash: name: {
+  #     inherit name;
+  #     gtk.enable = true;
+  #     x11.enable = true;
+  #     size = 48;
+  #     package = pkgs.runCommand "moveUp" {} ''
+  #       mkdir -p $out/share/icons
+  #       ln -s ${pkgs.fetchzip { inherit url hash; }} $out/share/icons/${name}
+  #     '';
+  #   };
+  # in getFrom
+  #   "https://github.com/ful1e5/fuchsia-cursor/releases/download/v2.0.0/Fuchsia-Pop.tar.gz"
+  #   "sha256-BvVE9qupMjw7JRqFUj1J0a4ys6kc9fOLBPx2bGaapTk="
+  #   "Fuchsia-Pop";
 
   services = {
     # After changing: `systemctl --user restart picom.service`
@@ -165,5 +243,4 @@ in
       # inactiveOpacity = 0.95;
     };
   };
-
 }

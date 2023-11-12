@@ -19,6 +19,7 @@
   };
   boot.loader.timeout = 1; # As per [https://discourse.nixos.org/t/how-to-add-bootentry-booting-straight-into-latest-generation/33507/2]
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = [ "ntfs" ];
 
 
   #=============== NIX ==============#
@@ -66,10 +67,7 @@
     libinput = {
       enable = true;
 
-      mouse = {
-        # See [https://unix.stackexchange.com/a/487975]
-        # buttonMapping = "1 0 3"; # Disable middle mouse
-      };
+      mouse = {};
       touchpad = {
         naturalScrolling = true;
         disableWhileTyping = true;
@@ -81,6 +79,12 @@
     autoRepeatInterval = 50;
   };
 
+
+  #=============== DISPLAY MANAGER ==============#
+  services.xserver = {
+    displayManager = {
+    };
+  };
 
   #=============== AUDIO + BLUETOOTH ==============#
   # Enable audio via PulseAudio
@@ -107,6 +111,7 @@
   #=============== FONTS ==============#
   # Install fonts
   fonts.fonts = with pkgs; [
+    (nerdfonts.override { fonts = [ "FiraCode" ]; })
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
@@ -232,16 +237,16 @@
 
     #== Desktop applications ==#
     blender
-    discord
+    cava
     firefox
     imagemagick7
     neofetch
-    # vscode # Now managed by home-manager
-    youtube-music
-    cava
-    xournalpp
+    obs-studio
     okular
+    xournalpp
+    youtube-music
     # fish
+    # vscode # Now managed by home-manager
   ];
 
   #=============== ADDITIONAL INITIALIZATION ==============#

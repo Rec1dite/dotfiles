@@ -13,6 +13,7 @@ let
     "github"
     "clickup"
   ];
+  vscodeKeybindings = import ./config/vscode/keybindings.nix;
   upkg = import <unstable> {};
 in
 {
@@ -63,8 +64,7 @@ in
       if [ "$CHOSENLAYOUT" ]; then
         /home/rec1dite/.screenlayout/$CHOSENLAYOUT
       fi
-    '')
-  ];
+    '') ];
 
   programs = {
     #===== GIT =====#
@@ -110,7 +110,7 @@ in
       #     enable = true;
       #   }
       # };
-      keybindings = [];
+      keybindings = vscodeKeybindings;
     };
 
     #===== BAT =====#
@@ -189,45 +189,44 @@ in
   };
 
   #=============== RICE ==============#
-  #===== GTK =====#
   # See [https://youtu.be/m_6eqpKrtxk]
   gtk = {
     enable = true;
     font.name = "Fira Code";
 
+    #===== CURSOR =====#
     cursorTheme = {
       package = pkgs.bibata-cursors;
       name = "Bibata-Modern-Ice";
       size = 10;
     };
 
+    #===== TRAFFIC LIGHTS =====#
+    # Disable traffic lights
+    # See [https://docs.gtk.org/gtk4/property.Settings.gtk-decoration-layout.html]
+    gtk3.extraConfig.gtk-decoration-layout = "menu:none";
+    gtk4.extraConfig.gtk-decoration-layout = "menu:none";
+
+    #===== GTK THEME =====#
     theme = {
       name = "Catppuccin-Mocha-Compact-Blue-Dark";
       package = pkgs.catppuccin-gtk.override {
         accents = [ "blue" ];
         size = "compact";
-        tweaks = [];
+        tweaks = [ "rimless" "black" "normal" ];
         variant = "mocha";
       };
     };
   };
 
-  #===== CURSOR =====#
-  # home.pointerCursor = let
-  #   getFrom = url: hash: name: {
-  #     inherit name;
-  #     gtk.enable = true;
-  #     x11.enable = true;
-  #     size = 48;
-  #     package = pkgs.runCommand "moveUp" {} ''
-  #       mkdir -p $out/share/icons
-  #       ln -s ${pkgs.fetchzip { inherit url hash; }} $out/share/icons/${name}
-  #     '';
-  #   };
-  # in getFrom
-  #   "https://github.com/ful1e5/fuchsia-cursor/releases/download/v2.0.0/Fuchsia-Pop.tar.gz"
-  #   "sha256-BvVE9qupMjw7JRqFUj1J0a4ys6kc9fOLBPx2bGaapTk="
-  #   "Fuchsia-Pop";
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style = {
+      name = "adwaita-dark"; # TODO
+      # package = pkgs.adwaita-qt;
+    };
+  };
 
   services = {
     # After changing: `systemctl --user restart picom.service`

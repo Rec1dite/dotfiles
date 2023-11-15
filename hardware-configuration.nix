@@ -13,19 +13,30 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/cba3fd87-dd87-4f87-afa0-6fbd30cbff8f";
-    fsType = "ext4";
-  };
+  # To get UUID data: [$ lsblk -o NAME,FSSIZE,FSTYPE,FSUSED,PKNAME,UUID]
 
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/A0E3-108C";
-    fsType = "vfat";
-  };
-
-  fileSystems."/home/rec1dite/.mnt/ub1tu" = {
-    device = "/dev/disk/by-uuid/4cc0ea5d-2d88-4f62-a013-e024a2d3960a";
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-uuid/cba3fd87-dd87-4f87-afa0-6fbd30cbff8f";
       fsType = "ext4";
+    };
+
+    "/boot" = {
+      device = "/dev/disk/by-uuid/A0E3-108C";
+      fsType = "vfat";
+    };
+
+    "/home/rec1dite/.mnt/ub1tu" = {
+      device = "/dev/disk/by-uuid/4cc0ea5d-2d88-4f62-a013-e024a2d3960a";
+      fsType = "ext4";
+    };
+
+    # See [https://nixos.wiki/wiki/NTFS]
+    "/home/rec1dite/.mnt/heap" = {
+      device = "/dev/disk/by-uuid/2C6E23E36E23A494";
+      fsType = "ntfs-3g";
+      options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]
+    };
   };
 
   swapDevices = [];

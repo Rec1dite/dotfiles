@@ -74,16 +74,17 @@
       };
     };
 
-    # Set keyrepeat values (eqiv. to `xset r rate 250 50`)
-    autoRepeatDelay = 250;
-    autoRepeatInterval = 50;
+    # Set keyrepeat values (eqiv. to `xset r rate 225 60`)
+    autoRepeatDelay = 225;
+    autoRepeatInterval = 60;
+
+    exportConfiguration = true; # Creates a symlink at /etc/X11/xorg.conf pointing to the main config
   };
 
 
   #=============== DISPLAY MANAGER ==============#
   services.xserver = {
-    displayManager = {
-    };
+    displayManager = {};
   };
 
   #=============== AUDIO + BLUETOOTH ==============#
@@ -111,7 +112,7 @@
   #=============== FONTS ==============#
   # Install fonts
   fonts.fonts = with pkgs; [
-    (nerdfonts.override { fonts = [ "FiraCode" ]; })
+    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
@@ -180,6 +181,17 @@
     };
   };
 
+  #=============== ASUS LINUX UTILS ==============#
+  # See [https://asus-linux.org/guides/nixos]
+  # Set up Supergfxctl
+  services.supergfxd.enable = true;
+
+  services.asusd = {
+    enable = true;
+    enableUserService = true;
+    # auraConfig
+  };
+
 
   #=============== USER ACCOUNTS ==============#
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -195,10 +207,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    #== Editors ==#
-    vim
-
     #== System utils ==#
+    coreutils
     bottom
     file
     git
@@ -211,6 +221,15 @@
     pciutils
     sxiv
     wget
+    tree
+    ripgrep
+    nix-index # Enables `nix-locate`
+    xmonad-log
+
+    #== Programming ==#
+    vim
+    haskell-language-server
+    ghc
 
     # For disabling middle click paste
     xbindkeys
@@ -245,8 +264,12 @@
     okular
     xournalpp
     youtube-music
+    vlc
     # fish
-    # vscode # Now managed by home-manager
+
+    # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overrides]
+    tauon
+    # tauon.override (prev: {})
   ];
 
   #=============== ADDITIONAL INITIALIZATION ==============#

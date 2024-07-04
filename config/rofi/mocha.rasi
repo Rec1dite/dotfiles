@@ -1,15 +1,15 @@
 * {
     bg-col:  #1e1e2e;
     bg-col-light: #1e1e2e;
-    border-col: #1e1e2e;
+    border-col: #f43e5c;
     selected-col: #1e1e2e;
-    blue: #89b4fa;
+    blue: #f43e5c;
     fg-col: #cdd6f4;
     fg-col2: #f38ba8;
     grey: #6c7086;
 
-    width: 600;
-    font: "JetBrainsMono Nerd Font 14";
+    width: 800;
+    font: "Hack 12";
 }
 
 element-text, element-icon , mode-switcher {
@@ -72,6 +72,10 @@ element {
 
 element-icon {
     size: 25px;
+}
+
+element-text {
+    padding: 2.5px 0px 0px 10px;
 }
 
 element selected {

@@ -2,6 +2,9 @@
 -- [https://github.com/haskell/haskell-language-server/issues/2932#issuecomment-1139531151]
 -- [https://github.com/haskell/haskell-language-server/issues/2932]
 -- [https://github.com/haskell/haskell-language-server/issues/236]
+
+module Main where
+
 -- IMPORTS
 import XMonad
 import XMonad.Util.SpawnOnce
@@ -11,7 +14,6 @@ import XMonad.Util.Run
 import XMonad.Prompt
 import XMonad.Prompt.Ssh
 import XMonad.Hooks.DynamicIcons
-
 --Layouts
 import XMonad.Layout
 import XMonad.Layout.Accordion
@@ -63,8 +65,8 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
 -- Polybar
----- import qualified DBus as D
----- import qualified DBus.Client as D
+import qualified DBus as D
+import qualified DBus.Client as D
 import qualified Codec.Binary.UTF8.String as UTF8
 import XMonad.Layout.Dwindle (Dwindle(Spiral))
 import Data.ByteString.Char8 (split)
@@ -82,7 +84,8 @@ import Graphics.X11 (xK_backslash)
 myScreenLayout = "~/.screenlayout/battery.sh"
 -- myScreenLayout = ""
 
-borderRed = "#f43e5c"
+-- borderRed = "#f43e5c"
+borderRed = "#00ff00"
 -- borderGrey = "#1c1e26"
 borderGrey = "#1e1e2e"
 
@@ -236,7 +239,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     -- Quit xmonad
     , ((modm .|. shiftMask, xK_q     ), io $ exitWith ExitSuccess)
     -- Restart xmonad
-    , ((modm              , xK_q     ), spawn "xmonad --recompile; xmonad --restart; polybar-msg cmd restart")
+    , ((modm              , xK_q     ), spawn "xmonad --restart; polybar-msg cmd restart")
 
     ---------- REMOVED ----------
 
@@ -393,31 +396,43 @@ removePrefix prefix str = if Prelude.take prefixLen str == prefix then drop pref
 
 -- See [https://youtu.be/d1KWL2MKXZw?t=333] for polybar configuration
 -- See [https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Hooks-StatusBar-PP.html] for params
----- myLogHook :: D.Client -> PP
----- myLogHook dbus = def {
-    ---- ppOutput =  dbusOutput dbus,
-    ---- ppCurrent = wrap "[%{F#f43e5c}" "%{F-}]",
-    ---- ppVisible = wrap "%{F#9399b2}[" "]%{F-}",
-    ---- ppUrgent =  wrap "(%{F#f43e5c}" "%{F-})",
-    ---- ppHidden =  wrap "%{F#585b70}" "%{F-}",
-    ---- -- ppLayout =  removePrefix "Spacing " . removePrefix "Hidden ",
-    ---- ppTitle =   const "",
-    ---- ppSep =     " : ",
-    ---- ppSort =    getSortByXineramaRule
-    ---- -- ppExtras = [logWhenActive 1 $ logCmd "date +%s%N"]
----- }
+myLogHook :: D.Client -> PP
+myLogHook dbus = def {
+    ppOutput =  dbusOutput dbus
+    -- ppCurrent = wrap "[%{F#f43e5c}" "%{F-}]",
+    -- ppVisible = wrap "%{F#9399b2}[" "]%{F-}",
+    -- ppUrgent =  wrap "(%{F#f43e5c}" "%{F-})",
+    -- ppHidden =  wrap "%{F#585b70}" "%{F-}",
+    -- ppHiddenNoWindows
+    -- ppLayout =  removePrefix "Spacing " . removePrefix "Hidden ",
+    -- ppTitle =   const "",
+    -- ppSep =     " : ",
+    -- ppSort =    getSortByXineramaRule
+    -- ppExtras = [logWhenActive 1 $ logCmd "date +%s%N"]
+}
+
+testLogHook :: PP
+testLogHook = def {
+    ppOutput = appendFile "/tmp/xmonadLog"
+}
 
 -- Emit a DBus signal on log updates
----- dbusOutput :: D.Client -> String -> IO ()
----- dbusOutput dbus str = do
-    ---- let signal = (D.signal objectPath interfaceName memberName) {
-        ---- D.signalBody = [D.toVariant $ UTF8.decodeString str]
-    ---- }
-    ---- D.emit dbus signal
-  ---- where
-    ---- objectPath = D.objectPath_ "/org/xmonad/Log"
-    ---- interfaceName = D.interfaceName_ "org.xmonad.Log"
-    ---- memberName = D.memberName_ "Update"
+dbusOutput :: D.Client -> String -> IO ()
+dbusOutput dbus str = let
+        objectPath = D.objectPath_ "/org/xmonad/Log"
+        interfaceName = D.interfaceName_ "org.xmonad.Log"
+        memberName = D.memberName_ "Update"
+        signal = D.signal objectPath interfaceName memberName
+        signalBody = [D.toVariant $ UTF8.decodeString str]
+    in D.emit dbus $ signal { D.signalBody = signalBody }
+
+mkDbusClient :: IO D.Client
+mkDbusClient = do
+    dbus <- D.connectSession
+    D.requestName dbus (D.busName_ "org.xmonad.Log") opts
+    return dbus
+    where
+        opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 
 ------------------------------------------------------------------------
 -- STARTUP HOOK
@@ -439,11 +454,9 @@ myStartupHook = do
 -- The 'def' record update overrides the defaults specified in xmonad/XMonad/Config.hs
 main :: IO ()
 -- main = xmonad . ewmh =<< xmobar myConfig
+
 main = do
-    ---- dbus <- D.connectSession
-    -- Request access to the dbus name
-    ---- D.requestName dbus (D.busName_ "org.xmonad.Log")
-        ---- [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
+    dbus <- mkDbusClient
 
     -- ewmh :: XConfig a -> XConfig a
     -- xmonad :: XConfig a -> IO ()
@@ -465,7 +478,8 @@ main = do
         manageHook = myManageHook,
         layoutHook = myLayout,
         startupHook = myStartupHook,
-        handleEventHook = mempty
+        -- handleEventHook = mempty,
+        handleEventHook = fullscreenEventHook,
 
         -- logHook :: X ()
         -- dynamicLogWithPP :: PP -> X ()
@@ -476,6 +490,7 @@ main = do
         -- TODO: Rename workspaces
         -- See [https://www.reddit.com/r/xmonad/comments/34w02a/interactive_workspace_rename_in_xmonad]
         -- and [https://unix.stackexchange.com/questions/217213/getting-xmonad-to-show-name-of-current-workspace-in-xmobar]
+        -- logHook = dynamicLogWithPP $ myLogHook dbus
+        logHook = dynamicLogWithPP testLogHook
         -- logHook = workspaceNamesPP >> dynamicLogWithPP $ myLogHook dbus
-        ---- logHook = dynamicLogWithPP $ myLogHook dbus
     }

@@ -1,0 +1,3 @@
+- Polybar
+    - [x] Launch on login
+    - [x] XMonad integration

@@ -9,7 +9,10 @@
 	url = https://github.com/Rec1dite/espr
 [submodule "config/polybar/scripts/polybar-cava"]
 	path = config/polybar/scripts/polybar-cava
-	url = https://github.com/catppuccin/youtubemusic
+	url = https://github.com/ray-pH/polybar-cava
 [submodule "config/polybar/scripts/redshift"]
 	path = config/polybar/scripts/espr
 	url = https://github.com/catppuccin/youtubemusic
+[submodule "config/tauon/catppuccin-tauon"]
+	path = config/tauon/catppuccin-tauon
+	url = https://github.com/Achardir/catppuccin-tauon

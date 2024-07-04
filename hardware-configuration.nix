@@ -33,10 +33,12 @@
 
     # See [https://nixos.wiki/wiki/NTFS]
     "/home/rec1dite/.mnt/heap" = {
-      device = "/dev/disk/by-uuid/2C6E23E36E23A494";
+      device = "/dev/disk/by-uuid/3CC8433BC842F2A6";
       fsType = "ntfs-3g";
       options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]
     };
+	# -      device = "/dev/disk/by-uuid/2C6E23E36E23A494";
+	# +      device = "/dev/disk/by-uuid/3CC8433BC842F2A6";
   };
 
   swapDevices = [];

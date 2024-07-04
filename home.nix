@@ -1,6 +1,5 @@
 # See docs [https://nix-community.github.io/home-manager/options.html]
 # See [https://youtu.be/IiyBeR-Guqw]
-
 { config, lib, pkgs, ... }:
 
 let
@@ -13,8 +12,11 @@ let
     "github"
     "clickup"
   ];
-  vscodeKeybindings = import ./config/vscode/keybindings.nix;
-  upkg = import <unstable> {};
+  # vscodeKeybindings = import ./config/vscode/keybindings.nix; # Removed in favor of Settings Sync
+  upkg = import <unstable> { overlays = [
+    # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overlays]
+    # (self: super: { hie-nix = import ~/src/hie-nix {}; })
+  ]; };
 in
 {
   #=============== HOME MANAGER ==============#
@@ -36,11 +38,6 @@ in
   #   "vscode"
   # ]);
 
-  # Expose Haskell IDE Engine (HIE) for VSCode
-  nixpkgs.overlays = [
-    # (self: super: { hie-nix = import ~/src/hie-nix {} })
-  ];
-
   #=============== USER SOFTWARE ==============#
   # Install Nix packages only in the local user environment
   home.packages = with pkgs; [
@@ -53,7 +50,7 @@ in
     (pkgs.writeShellScriptBin "discord" ''firefox --new-window "https://discord.com/app"'')
     (pkgs.writeShellScriptBin "todoist" ''firefox --new-window "https://todoist.com/app"'')
     (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
-    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground"'')
+    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground/assistants"'')
     (pkgs.writeShellScriptBin "gmail" ''firefox --new-window "https://mail.google.com"'')
     (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/Rec1dite"'')
     (pkgs.writeShellScriptBin "clickup" ''firefox --new-window "https://clickup.up.ac.za"'')
@@ -98,6 +95,7 @@ in
       enable = true;
       # font = "monospace";
       theme = "main";
+      # extraConfig = ./config/rofi/config.rasi;
     };
 
     #===== VSCODE =====#
@@ -108,9 +106,10 @@ in
       #   enable = true;
       #   hie = {
       #     enable = true;
-      #   }
+      #     # executablePath = "";
+      #   };
       # };
-      keybindings = vscodeKeybindings;
+      # keybindings = vscodeKeybindings; # Removed in favor of Settings Sync
     };
 
     #===== BAT =====#
@@ -131,10 +130,17 @@ in
       #   githubSupport = true;
       #   mpdSupport = true;
       #   pulseSupport = true;
-      #   i3GapsSupport = true;
       # };
       config = ./config/polybar/config.ini;
-      script = "polybar top &";
+      extraConfig = ''
+[module/xmonad]
+type = custom/script
+exec = ${pkgs.xmonad-log}/bin/xmonad-log
+tail = true
+      '';
+
+      # script = ''echo "----- $(date +%c) -----" ; polybar main & 2>&1 | tee -a /tmp/polybar.log & disown'';
+      script = "polybar main &";
     };
   };
 
@@ -149,17 +155,38 @@ in
     ) desktopEntries);
   in
   {
+    #----- Deploy config files -----#
+
     # To enter the config content directly:
     # ".config/someProg/someProg.conf".text = ''
     #   EXAMPLE_CONF = "Your conf here"
     # '';
 
-    # Deploy config files
+    # Also see: `lib.file.mkOutOfStoreSymlink`
+
+    # XMonad
     # ".config/xmonad/xmonad.hs".source = ./config/xmonad/xmonad.hs; # Moved to xmonad.nix's `config` setting
+
+    # Kitty
     ".config/kitty/kitty.conf".source = ./config/kitty/kitty.conf;
+
+    # Neofetch
     ".config/neofetch/config.conf".source = ./config/neofetch/config.conf;
+
+    # Rofi
     # ".config/rofi/config.rasi".source = ./config/rofi/config.rasi;
     ".local/share/rofi/themes/main.rasi".source = ./config/rofi/mocha.rasi;
+
+    # VLC
+    # REMOVED: Broken resizing with tiling WM
+    # ".local/share/vlc/skins2/Arc-Dark.vlt".source = ./config/vlc/Arc-Dark.vlt;
+
+    # Polybar scripts
+    polybarScripts = {
+      source = ./config/polybar/scripts;
+      target = ".config/polybar/scripts";
+      recursive = true;
+    };
 
     # Disable middle click paste
     # See [https://unix.stackexchange.com/a/277488]
@@ -170,6 +197,15 @@ in
 
   } // desktopFiles;
 
+  #=============== XSESSION PROGRAMS ==============#
+  xsession = {
+    enable = true;
+    # windowManager.start = ''
+      # systemctl --user restart polybar
+    # '';
+  };
+
+
   #=============== SHELL ==============#
   # You can also manage environment variables but you will have to manually
   # $ source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
@@ -178,14 +214,37 @@ in
     EDITOR = "vim";
   };
 
-  # Configure bash
-  programs.bash = {
-    enable = true;
+  programs = {
 
-    # Set aliases
-    shellAliases = {
-      la = "ls -a";
+    # Configure bash
+    bash = {
+      enable = true;
+
+      # Set aliases
+      shellAliases = {
+        la = "ls -a";
+        conf = "code /home/rec1dite/.dotfiles";
+      };
+
+      # Bashrc configs
+      bashrcExtra = "
+        xset r rate 250 50;
+      ";
     };
+
+    # Configure vim
+    vim = {
+      enable = true;
+      extraConfig =
+      ''
+        set ignorecase
+        set smartcase
+
+        set nu
+        set rnu
+      '';
+    };
+
   };
 
   #=============== RICE ==============#
@@ -234,6 +293,11 @@ in
     picom = {
       enable = true;
       shadow = true;
+      shadowExclude = [
+        # See picom(1) for more 'CONDITION' rules
+        "class_g = 'dmenu'"
+        "class_g = 'Polybar'"
+      ];
       # shadowOffsets = [-15 -15]; # default
       # shadowOpacity = 0.75; # default
       # fade = true;

@@ -18,6 +18,7 @@
     # Enable XMonad
     windowManager.xmonad = {
       enable = true;
+      enableConfiguredRecompile = true;
       enableContribAndExtras = true;
 
       extraPackages = haskpkgs: [
@@ -26,7 +27,7 @@
         haskpkgs.xmonad-contrib
       ];
 
-      config = ./config/xmonad/xmonad.hs;
+      config = builtins.readFile ./config/xmonad/xmonad.hs;
 
       # Redefine CapsLock behaviour
       # xkbOptions = "caps:ctrl_modifier";

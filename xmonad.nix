@@ -15,19 +15,19 @@
 
     displayManager.defaultSession = "none+xmonad";
 
-    # Enable XMonad
+    # Enable XMonad (Config handled in home.nix)
     windowManager.xmonad = {
       enable = true;
       enableConfiguredRecompile = true;
       enableContribAndExtras = true;
 
-      extraPackages = haskpkgs: [
-        haskpkgs.dbus
-        haskpkgs.monad-logger
-        haskpkgs.xmonad-contrib
-      ];
+      # extraPackages = haskpkgs: [
+      #   haskpkgs.dbus
+      #   haskpkgs.monad-logger
+      #   haskpkgs.xmonad-contrib
+      # ];
 
-      config = builtins.readFile ./config/xmonad/xmonad.hs;
+      # config = builtins.readFile ./config/xmonad/xmonad.hs;
 
       # Redefine CapsLock behaviour
       # xkbOptions = "caps:ctrl_modifier";
@@ -40,13 +40,4 @@
     };
 
   };
-
-  # Define XMonad config
-  # services.xserver.windowManager.xmonad.config = builtins.readFile /home/rec1dite/.config/xmonad/xmonad.hs;
-
-  # inputs.xmonad-contexts = {
-  #   url = "github:Procrat/xmonad-contexts";
-  #   flake = false;
-  # };
-
 }

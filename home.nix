@@ -200,9 +200,24 @@ tail = true
   #=============== XSESSION PROGRAMS ==============#
   xsession = {
     enable = true;
+
     # windowManager.start = ''
       # systemctl --user restart polybar
     # '';
+
+    windowManager.xmonad = {
+      enable = true;
+      # enableConfiguredRecompile = true;
+      enableContribAndExtras = true;
+
+      extraPackages = haskpkgs: [
+        haskpkgs.dbus
+        haskpkgs.monad-logger
+        haskpkgs.xmonad-contrib
+      ];
+
+      config = ./config/xmonad/xmonad.hs;
+    };
   };
 
 

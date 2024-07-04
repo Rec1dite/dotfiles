@@ -84,9 +84,7 @@ import Graphics.X11 (xK_backslash)
 myScreenLayout = "~/.screenlayout/battery.sh"
 -- myScreenLayout = ""
 
--- borderRed = "#f43e5c"
-borderRed = "#00ff00"
--- borderGrey = "#1c1e26"
+borderRed = "#f43e5c"
 borderGrey = "#1e1e2e"
 
 -- The default number of workspaces (virtual screens) and their names.
@@ -398,21 +396,21 @@ removePrefix prefix str = if Prelude.take prefixLen str == prefix then drop pref
 -- See [https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Hooks-StatusBar-PP.html] for params
 myLogHook :: D.Client -> PP
 myLogHook dbus = def {
-    ppOutput =  dbusOutput dbus
-    -- ppCurrent = wrap "[%{F#f43e5c}" "%{F-}]",
-    -- ppVisible = wrap "%{F#9399b2}[" "]%{F-}",
-    -- ppUrgent =  wrap "(%{F#f43e5c}" "%{F-})",
-    -- ppHidden =  wrap "%{F#585b70}" "%{F-}",
+    ppOutput =  dbusOutput dbus,
+    ppCurrent = wrap "[%{F#f43e5c}" "%{F-}]",
+    ppVisible = wrap "%{F#9399b2}[" "]%{F-}",
+    ppUrgent =  wrap "(%{F#f43e5c}" "%{F-})",
+    ppHidden =  wrap "%{F#585b70}" "%{F-}",
     -- ppHiddenNoWindows
     -- ppLayout =  removePrefix "Spacing " . removePrefix "Hidden ",
-    -- ppTitle =   const "",
-    -- ppSep =     " : ",
-    -- ppSort =    getSortByXineramaRule
+    ppTitle =   const "",
+    ppSep =     " : ",
+    ppSort =    getSortByXineramaRule
     -- ppExtras = [logWhenActive 1 $ logCmd "date +%s%N"]
 }
 
-testLogHook :: PP
-testLogHook = def {
+debugLogHook :: PP
+debugLogHook = def {
     ppOutput = appendFile "/tmp/xmonadLog"
 }
 
@@ -490,7 +488,7 @@ main = do
         -- TODO: Rename workspaces
         -- See [https://www.reddit.com/r/xmonad/comments/34w02a/interactive_workspace_rename_in_xmonad]
         -- and [https://unix.stackexchange.com/questions/217213/getting-xmonad-to-show-name-of-current-workspace-in-xmobar]
-        -- logHook = dynamicLogWithPP $ myLogHook dbus
-        logHook = dynamicLogWithPP testLogHook
+        logHook = dynamicLogWithPP $ myLogHook dbus
+        -- logHook = dynamicLogWithPP debugLogHook
         -- logHook = workspaceNamesPP >> dynamicLogWithPP $ myLogHook dbus
     }

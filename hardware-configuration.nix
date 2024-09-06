@@ -8,10 +8,12 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [];
-  boot.kernelModules = [ "kvm-amd" ];
-  boot.extraModulePackages = [];
+  boot = {
+    initrd.availableKernelModules = [ "nvme" "xhci_pci" "usbhid" "usb_storage" "sd_mod" ];
+    initrd.kernelModules = [];
+    kernelModules = [ "kvm-amd" ];
+    extraModulePackages = [];
+  };
 
   # To get UUID data: [$ lsblk -o NAME,FSSIZE,FSTYPE,FSUSED,PKNAME,UUID]
 
@@ -32,8 +34,15 @@
     };
 
     # See [https://nixos.wiki/wiki/NTFS]
+    # Obtain UUID by: [$ lsblk -o NAME,LABEL,FSTYPE,SIZE,FSUSED,MOUNTPOINTS,UUID]
     "/home/rec1dite/.mnt/heap" = {
       device = "/dev/disk/by-uuid/3CC8433BC842F2A6";
+      fsType = "ntfs-3g";
+      options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]
+    };
+
+    "home/rec1dite/.mnt/c" = {
+      device = "/dev/disk/by-uuid/90D8E4CCD8E4B220";
       fsType = "ntfs-3g";
       options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]
     };

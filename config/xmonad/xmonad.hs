@@ -115,11 +115,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     -- For key codes, use `xev` and look in `/usr/include/X11/keysymdef.h` [https://unix.stackexchange.com/a/264551]
 
     -- toggle system volume mute
-      ((0,0x1008ff12), spawn "amixer -D pulse set Master toggle")
+      ((0,0x1008ff12), spawn "amixer set Master toggle")
     -- system volume down
-    , ((0,0x1008ff11), spawn "amixer -D pulse sset Master 2%-")
+    , ((0,0x1008ff11), spawn "amixer sset Master 2%-")
     -- system volume up
-    , ((0,0x1008ff13), spawn "amixer -D pulse sset Master 2%+")
+    , ((0,0x1008ff13), spawn "amixer sset Master 2%+")
     -- headset next song
     , ((0,0x1008ff17), spawn "playerctl next")
     -- headset prev song
@@ -150,7 +150,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     -- warp mouse to active window
     , ((modm,xK_z), warpToWindow (1%2) (1%2))
     -- launch screenshot utility
-    , ((0, xK_Print), spawn "gnome-screenshot -ia")
+    , ((0, xK_Print), spawn "flameshot launcher")
 
 
     ---------- LAUNCH APPLICATIONS ----------
@@ -160,11 +160,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     -- launch themed rofi
     , ((modm,xK_p), spawn "rofi -show drun -monitor -4")
     -- capture area screenshot
-    , ((modm .|. shiftMask, xK_s), spawn "kitty screen-snip")
+    , ((modm .|. shiftMask, xK_s), spawn "flameshot gui")
     -- launch firefox
     , ((modm, xK_bracketleft), spawn "firefox")
-    -- launch ranger
-    , ((modm, xK_o), spawn "kitty 'ranger'")
+    -- launch yazi
+    , ((modm, xK_o), spawn "kitty 'yazi'")
     -- launch dmenu
     , ((modm .|. shiftMask, xK_p), spawn "dmenu_run -p 'ᐒ' -fn 'Fira Code:pixelsize=14' -sb '#f43e5c' -sf '#1e1e2e' -nb '#1e1e2e' -nf '#bac2de'")
 
@@ -488,7 +488,7 @@ main = do
         -- TODO: Rename workspaces
         -- See [https://www.reddit.com/r/xmonad/comments/34w02a/interactive_workspace_rename_in_xmonad]
         -- and [https://unix.stackexchange.com/questions/217213/getting-xmonad-to-show-name-of-current-workspace-in-xmobar]
-        logHook = dynamicLogWithPP $ myLogHook dbus
+        -- logHook = dynamicLogWithPP $ myLogHook dbus
         -- logHook = dynamicLogWithPP debugLogHook
-        -- logHook = workspaceNamesPP >> dynamicLogWithPP $ myLogHook dbus
+        logHook = workspaceNamesPP >> dynamicLogWithPP $ myLogHook dbus
     }

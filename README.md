@@ -6,3 +6,11 @@
 - `~/.config/home-manager/flake.nix` ⇢ `~/.dotfiles/flake.nix`
 
 > All other files in `/etc/nixos/` and `~/.config/home-manager/` may be removed.
+
+
+
+### Additional configs:
+```bash
+# Keyboard laser effect
+asusctl led-mode laser -s high -c ff0205
+```

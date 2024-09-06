@@ -2,7 +2,7 @@
 # See [configuration.nix(5)]
 # See [$ nixos-help]
 
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, upkgs, home-manager, mkPoetryApplication, ... }:
 
 {
   imports =
@@ -30,17 +30,42 @@
   nixpkgs.config.allowUnfree = true;
 
   # Leave as-is
-  system.stateVersion = "23.05";
+  system.stateVersion = "24.05";
 
+  # Automatic garbage collection + optimisation
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 30d";
+  };
+  nix.settings.auto-optimise-store = true;
+
+  system.autoUpgrade = {
+    enable = true;
+    # flake = inputs.self.outPath;
+    # flags = [
+    #   "--update-input"
+    #   "nixpkgs"
+    #   "-L"
+    # ];
+    # dates = "02:00";
+    # randomizedDelaySec = "45min";
+  };
 
   #=============== SYSTEM ==============#
   # Enable upower
   services.upower.enable = true;
-  systemd.services.upower.enable = true;
-
-  #=============== NETWORKING ==============#
+  systemd.services.upower.enable = true; #=============== NETWORKING ==============#
   networking.hostName = "n1x"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+
+  services.tlp = {
+    enable = true;
+    settings = {
+      # SATA_LINKPWR_ON_BAT = "med_power_with_dipm";
+      # USB_BLACKLIST_PHONE = 1;
+    };
+  };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -60,18 +85,9 @@
   services.xserver = {
     enable = true;
     # Configure keymap in X11
-    layout = "za";
-    xkbVariant = "";
-
-    # Configure input devices
-    libinput = {
-      enable = true;
-
-      mouse = {};
-      touchpad = {
-        naturalScrolling = true;
-        disableWhileTyping = true;
-      };
+    xkb = {
+      layout = "za";
+      variant = "";
     };
 
     # Set keyrepeat values (eqiv. to `xset r rate 225 60`)
@@ -81,11 +97,17 @@
     exportConfiguration = true; # Creates a symlink at /etc/X11/xorg.conf pointing to the main config
   };
 
+  # Configure input devices
+  services.libinput = {
+    enable = true;
 
-  #=============== DISPLAY MANAGER ==============#
-  services.xserver = {
-    displayManager = {};
+    mouse = {};
+    touchpad = {
+      naturalScrolling = true;
+      disableWhileTyping = true;
+    };
   };
+
 
   #=============== AUDIO + BLUETOOTH ==============#
   # Enable audio via PulseAudio
@@ -93,6 +115,15 @@
   hardware.pulseaudio.enable = true;
   hardware.pulseaudio.support32Bit = true; # Enable compatibility with 32-bit apps
   nixpkgs.config.pulseaudio = true;
+
+  # If pulseaudio fails to start, try:
+  # $ pulseaudio --kill
+  # $ pulseaudio --start
+
+  # TODO: Fixes
+  # See [https://www.reddit.com/r/ASUS/comments/mfokva/asus_strix_scar_17_g733qs_and_linux]
+  # and [https://nixos.wiki/wiki/ALSA]
+  # and [$ pactl list sinks]
 
   # Enable bluetooth
   hardware.bluetooth.enable = true;
@@ -102,6 +133,7 @@
   # FOR HOME MANAGER:
   # # Enable headset audio controls (play/pause etc.)
   # systemd.user.services.mpris-proxy = {
+  #   enable = true;
   #   description = "Mpris proxy";
   #   after = [ "network.target" "sound.target" ];
   #   wantedBy = [ "default.target" ];
@@ -111,7 +143,7 @@
 
   #=============== FONTS ==============#
   # Install fonts
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
     noto-fonts
     noto-fonts-cjk
@@ -188,7 +220,7 @@
 
   services.asusd = {
     enable = true;
-    enableUserService = true;
+    enableUserService = false;
     # auraConfig
   };
 
@@ -198,18 +230,28 @@
   users.users.rec1dite = {
     isNormalUser = true;
     description = "Rec1dite";
-    extraGroups = [ "networkmanager" "wheel" "audio" "mlocate" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "mlocate" "docker" ];
     packages = with pkgs; [];
   };
 
 
   #=============== SYSTEM SOFTARE ==============#
+  nixpkgs.config.permittedInsecurePackages = [
+    "freeimage-unstable-2021-11-01"
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     #== System utils ==#
-    coreutils
+    alsa-lib
+    alsa-plugins
+    alsa-utils
     bottom
+    brightnessctl
+    cifs-utils
+    coreutils
+    eza
     file
     git
     gparted
@@ -217,19 +259,41 @@
     kitty
     lshw
     mpv
+    mtr
     neofetch
-    pciutils
-    sxiv
-    wget
-    tree
-    ripgrep
     nix-index # Enables `nix-locate`
+    p7zip
+    pciutils
+    playerctl
+    ripgrep
+    ripgrep
+    sxiv
+    tree
+    toybox # Bunch of command line utils
+    unzip
+    wget
     xmonad-log
+    xorg.xev
+    zip
+    # libsForQt5.qtstyleplugin-kvantum
+    libsForQt5.qt5ct
 
     #== Programming ==#
     vim
     haskell-language-server
     ghc
+    manix
+    just
+    nix-output-monitor
+    nil
+    nixpkgs-fmt
+    nix-init # Easy Nix package generation from URLs
+    upkgs.devbox
+    gnome.adwaita-icon-theme
+    gtk3
+    glib
+    gsettings-desktop-schemas
+    # (arrayfire.override { cudaSupport = true; } )
 
     # For disabling middle click paste
     xbindkeys
@@ -239,6 +303,13 @@
     #== System config ==#
     arandr
     nitrogen
+    (catppuccin-sddm.override {
+      flavor = "mocha";
+      font  = "Fira Code";
+      fontSize = "9";
+      # background = "${./wallpaper.png}";
+      loginBackground = false;
+    })
 
     #== Nvidia ==#
     cudatoolkit
@@ -253,11 +324,14 @@
     gnome.nautilus
     ranger
     rofi
+    haskellPackages.greenclip
 
     #== Desktop applications ==#
-    blender
+    (blender.override { cudaSupport = true; })
     cava
     firefox
+    tor-browser
+    keepass
     imagemagick7
     neofetch
     obs-studio
@@ -265,17 +339,113 @@
     xournalpp
     youtube-music
     vlc
-    # fish
+    yt-dlp
+    ffmpeg_7
+    vesktop
+    transmission-gtk
 
     # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overrides]
-    tauon
-    # tauon.override (prev: {})
+    (tauon.overrideAttrs (final: prev: {
+      # themeSrc = fetchFromGitHub {
+      #   owner = "Achardir";
+      #   repo = "catppuccin-tauon";
+      #   rev = "main";
+      #   hash = "sha256-LgndOH/6hYE/NNgxwYYfRFhkOYwdaKVIC/z+ahEgat4=";
+      # };
+      # See [https://nix.dev/tutorials/working-with-local-files.html#adding-files-to-the-nix-store]
+      # and [https://noogle.dev/f/lib/fileset/toSource]
+      themeSrc = lib.fileset.toSource {
+        root = ./config/tauon;
+        fileset = ./config/tauon/Cr1m.ttheme;
+      };
+      installPhase = ''
+        ${prev.installPhase}
+        cp $themeSrc/Cr1m.ttheme $out/share/tauon/theme
+        '';
+    }))
+
+    #== Temp FHS environment ==#
+    # For quick execution of arbitrary binaries requiring FHS conformity
+    # See [https://nixos-and-flakes.thiscute.world/best-practices/run-downloaded-binaries-on-nixos]
+    (
+      let
+        base = pkgs.appimageTools.defaultFhsEnvArgs;
+      in
+        pkgs.buildFHSUserEnv (base // {
+        name = "fhs";
+        targetPkgs = pkgs: (
+          (base.targetPkgs pkgs) ++ (with pkgs; [
+            pkg-config
+            ncurses
+          ])
+        );
+        profile = "export FHS=1";
+        runScript = "bash";
+        extraOutputsToInstall = ["dev"];
+      })
+    )
+
   ];
 
   #=============== ADDITIONAL INITIALIZATION ==============#
+  # Global env vars
+  environment.variables = {
+    EDITOR = "vim";
+  };
+
   environment.extraInit = ''
     unset -v SSH_ASKPASS
   '';
+
+  #=============== RICE ==============#
+  stylix = {
+    enable = true;
+    base16Scheme = import ./config/stylix/cr1m.nix;
+    image = /home/rec1dite/media/wallpapers/koiFlowers.jpg;
+
+    cursor = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 12;
+    };
+
+    # Jost, Abel, Nunito Sans
+
+    fonts = {
+      sizes.applications = 10;
+      # serif = { package = pkgs.liberation_ttf; name = "Liberation Serif"; };
+      # sansSerif = { package = pkgs.liberation_ttf; name = "Liberation Sans"; };
+      # sansSerif = { package = pkgs.fira-code; name = "Fira Code"; };
+      sansSerif = { package = pkgs.hack-font; name = "Hack"; };
+      # monospace = { package = pkgs.fira-code; name = "Fira Code"; };
+      # emoji = { package = pkgs.fira-code-nerdfont; name = "Fira Code"; };
+    };
+  };
+
+  # See [https://nixos.wiki/wiki/KDE]
+  # and [https://discourse.nixos.org/t/catppuccin-kvantum-not-working/43727/14]
+  # qt = {
+    # enable = true;
+    # platformTheme = "gnome";
+    # style = "adwaita";
+
+    # platformTheme = "qt5ct";
+    # style = "kvantum";
+  # };
+
+  # xdg.configFile = let
+  #   accent = "Red";
+  #   variant = "Mocha";
+  #   themePkg = pkgs.catppuccin-kvantum.override { inherit accent variant; };
+  # in {
+  #   "Kvantum/kvantum.kvconfig".text = ''
+  #     [General]
+  #     theme=Catppuccin-${variant}-${accent}
+  #   '';
+
+  #   # Links theme directory from the package to a directory under `~/.config` so Kvantum can find it
+  #   "Kvantum/Catppuccin-${variant}-${accent}".source = "${themePkg}/share/Kvantum/Catppuccin-${variant}-${accent}";
+  # };
 
   #=============== MISC ==============#
   # Some programs need SUID wrappers, can be configured further or are
@@ -291,11 +461,69 @@
 
   services.locate = {
     enable = true;
-    locate = pkgs.mlocate;
+    package = pkgs.mlocate;
     localuser = null;
   };
 
   programs.slock = {
     enable = true;
+    package = let
+      c_init = "#000000";
+      c_input = "#080810";
+      c_failed = "#000000";
+    in (pkgs.slock.overrideAttrs (prev: {
+      postPatch = ''
+      sed -ir 's/\[INIT\]\s*=\s*".*",\s*/[INIT] = "${c_init}", /' config.def.h
+      sed -ir 's/\[INPUT\]\s*=\s*".*",\s*/[INPUT] = "${c_input}", /' config.def.h
+      sed -ir 's/\[FAILED\]\s*=\s*".*",\s*/[FAILED] = "${c_failed}", /' config.def.h
+      '' + prev.postPatch;
+    }));
+  };
+
+  programs.dconf = {
+    enable = true;
+  };
+
+  # Enable Docker
+  virtualisation.docker = {
+    enable = true;
+  };
+
+
+  # Setup lightweight NixOS container
+  # See [https://msucharski.eu/posts/application-isolation-nixos-containers]
+  # and [https://wiki.archlinux.org/title/Systemd-nspawn]
+  # and [https://nixos.wiki/wiki/NixOS_Containers#Usage]
+  containers = {
+    # To start the container:
+    # sudo systemctl start container@n2x.service
+
+    # To access the container shell:
+    # sudo machinectl shell rec2dite@n2x /usr/bin/env bash --login
+    n2x = {
+
+      config = { config, pkgs, ... }: {
+        #----- Config container -----#
+        # imports = [ (import "${home-manager}/nixos") ];
+
+        system.stateVersion = "24.05";
+        nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+        users.users.rec2dite = {
+          uid = 1000;
+          isNormalUser = true;
+          initialPassword = "password";
+          extraGroups = [ "wheel" ];
+        };
+
+        environment.systemPackages = with pkgs; [ vim ];
+
+        environment.variables = {
+          EDITOR = "vim";
+          TERM = "xterm-256color";
+        };
+      };
+
+    };
   };
 }

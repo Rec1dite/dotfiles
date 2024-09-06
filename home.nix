@@ -3,15 +3,16 @@
 { config, lib, pkgs, ... }:
 
 let
-  desktopEntries = [ 
-    "discord"
-    "todoist"
-    "whatsapp"
-    "chatgpt"
-    "gmail"
-    "github"
-    "clickup"
-  ];
+  rofi-emoji = (pkgs.rofi-emoji.overrideAttrs (prev: {
+    postPatch = prev.postPatch + ''
+cat << EOF >> all_emojis.txt
+ᐒ	Custom	custom	rec1dite	rec1dite
+ඞ	Custom	custom	amongus	amogus
+
+EOF
+      '';
+  }));
+
   # vscodeKeybindings = import ./config/vscode/keybindings.nix; # Removed in favor of Settings Sync
   upkg = import <unstable> { overlays = [
     # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overlays]
@@ -19,13 +20,15 @@ let
   ]; };
 in
 {
+  imports = [ ./desktopEntries.nix ];
+
   #=============== HOME MANAGER ==============#
   # Specify user information
   home.username = "rec1dite";
   home.homeDirectory = "/home/rec1dite";
 
   # Leave as-is
-  home.stateVersion = "23.05";
+  home.stateVersion = "24.05";
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
@@ -47,13 +50,6 @@ in
     # (pkgs.nerdfonts.override { fonts = [ "FantasqueSansMono" ]; })
 
     #== Custom shell scripts ==#
-    (pkgs.writeShellScriptBin "discord" ''firefox --new-window "https://discord.com/app"'')
-    (pkgs.writeShellScriptBin "todoist" ''firefox --new-window "https://todoist.com/app"'')
-    (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
-    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground/assistants"'')
-    (pkgs.writeShellScriptBin "gmail" ''firefox --new-window "https://mail.google.com"'')
-    (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/Rec1dite"'')
-    (pkgs.writeShellScriptBin "clickup" ''firefox --new-window "https://clickup.up.ac.za"'')
     (pkgs.writeShellScriptBin "easywifi" ''python3 ~/.dotfiles/scripts/easywifi/easywifi.py'')
     (pkgs.writeShellScriptBin "slay" ''
       CHOSENLAYOUT=$(ls /home/rec1dite/.screenlayout | dmenu -p 'ᐒ' -fn 'Fira Code:pixelsize=14' -sb '#f43e5c' -sf '#1e1e2e' -nb '#1e1e2e' -nf '#bac2de')
@@ -90,12 +86,68 @@ in
       };
     };
 
+    #===== DIRENV =====#
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
+    #===== STARSHIP =====#
+    starship = {
+      enable = true;
+      enableBashIntegration = true;
+      # See: [https://starship.rs/config]
+      settings = {
+        # Move directory to second line
+        format = "$all$directory$character";
+      };
+    };
+    #===== TMUX =====#
+    tmux = {
+      enable = true;
+      mouse = true;
+      keyMode = "vi";
+      historyLimit = 10000;
+    };
+
     #===== ROFI =====#
     rofi = {
       enable = true;
       # font = "monospace";
       theme = "main";
-      # extraConfig = ./config/rofi/config.rasi;
+      terminal = "${pkgs.kitty}/bin/kitty";
+      location = "center";
+
+      plugins = [ rofi-emoji ];
+
+      extraConfig = {
+        modi = "run,emoji,drun,clipboard:greenclip print,window";
+        # icon-theme = "Oranchelo";
+        icon-theme = "Papirus";
+        show-icons = true;
+        terminal = "kitty";
+        drun-display-format = "{icon} {name}";
+        disable-history = false;
+        hide-scrollbar = true;
+        display-drun = "   Apps ";
+        display-run = "   Run ";
+        display-emoji = " 󰞅 Emoji";
+        display-window = " 󰕰 Window";
+        display-clipboard = " 󱉣  Clipboard";
+        display-Network = " 󰤨  Network";
+        sidebar-mode = true;
+
+        # Vim keybinds
+        # See [https://man.archlinux.org/man/community/rofi/rofi-keys.5.en]
+        kb-row-up = "Super_L+k,Up";
+        kb-row-down = "Super_L+j,Down";
+        kb-row-left = "Super_L+h";
+        kb-row-right = "Super_L+l";
+
+        kb-accept-entry = "Return,KP_Enter";
+
+        kb-mode-next = "Super_L+K,Shift+Right";
+        kb-mode-previous = "Super_L+J,Shift+Left";
+      };
     };
 
     #===== VSCODE =====#
@@ -119,7 +171,23 @@ in
         theme = "base16"; # $ bat --list-themes
       };
     };
-    # TODO: trayer, bat-extras
+    # TODO: trayer, bat-extras, zellij
+
+    #===== YAZI =====#
+    yazi = {
+      enable = true;
+      theme = {
+      };
+      # keymap = {
+      #   manager.keymap = [
+      #     {
+      #       on = ["<C-s>"];
+      #       run = "shell '$SHELL' --block --confirm";
+      #       desc = "Open shell here";
+      #     }
+      #   ];
+      # };
+    };
   };
 
   services = {
@@ -132,6 +200,7 @@ in
       #   pulseSupport = true;
       # };
       config = ./config/polybar/config.ini;
+
       extraConfig = ''
 [module/xmonad]
 type = custom/script
@@ -142,17 +211,37 @@ tail = true
       # script = ''echo "----- $(date +%c) -----" ; polybar main & 2>&1 | tee -a /tmp/polybar.log & disown'';
       script = "polybar main &";
     };
+
+    flameshot = {
+      enable = true;
+      settings = {
+        General = {
+          # uiColor = "#f43e5c";
+          # contrastUiColor = "#1e1e2e";
+          contrastUiColor = "#f43e5c";
+          uiColor = "#181825";
+          savePath = "/home/rec1dite/media/screenshots";
+          savePathFixed = true;
+        };
+      };
+    };
+
+    dunst = {
+      enable = true;
+    };
   };
 
   #=============== DOTFILES ==============#
   home.file = let
     # Generate .desktop entries
-    desktopFiles = builtins.listToAttrs (map (
-      name: {
-        name = ".local/share/applications/${name}.desktop";
-        value = { source = ./applications + "/${name}.desktop"; };
-      }
-    ) desktopEntries);
+    # desktopFiles = builtins.listToAttrs (map (
+    #   name: {
+    #     name = ".local/share/applications/${name}.desktop";
+    #     value = { source = ./applications + "/${name}.desktop"; };
+    #   }
+    # ) desktopEntries);
+
+    blenderVersion = lib.versions.majorMinor pkgs.blender.version;
   in
   {
     #----- Deploy config files -----#
@@ -164,9 +253,6 @@ tail = true
 
     # Also see: `lib.file.mkOutOfStoreSymlink`
 
-    # XMonad
-    # ".config/xmonad/xmonad.hs".source = ./config/xmonad/xmonad.hs; # Moved to xmonad.nix's `config` setting
-
     # Kitty
     ".config/kitty/kitty.conf".source = ./config/kitty/kitty.conf;
 
@@ -176,17 +262,34 @@ tail = true
     # Rofi
     # ".config/rofi/config.rasi".source = ./config/rofi/config.rasi;
     ".local/share/rofi/themes/main.rasi".source = ./config/rofi/mocha.rasi;
+    ".config/greenclip.toml".source = ./config/rofi/greenclip.toml;
+
+    # Cava
+    ".config/cava/config".source = ./config/cava/config;
+
+    # Blender
+    ".config/blender/${blenderVersion}/scripts/presets/interface_theme/mocha_cr1m.xml".source = ./config/blender/mocha_cr1m.xml;
 
     # VLC
     # REMOVED: Broken resizing with tiling WM
     # ".local/share/vlc/skins2/Arc-Dark.vlt".source = ./config/vlc/Arc-Dark.vlt;
 
     # Polybar scripts
-    polybarScripts = {
-      source = ./config/polybar/scripts;
-      target = ".config/polybar/scripts";
-      recursive = true;
-    };
+    # ".config/polybar/scripts/cava.sh".source = pkgs.substituteAll {
+    #   src = ./config/polybar/scripts/polybar-cava/cava.sh;
+    #   cava = "${pkgs.cava}";
+    # };
+
+    # espr = {
+    #   source = ./config/polybar/scripts/espr;
+    #   target = ".config/polybar/scripts/espr";
+    #   recursive = false;
+    # };
+
+    # ".config/polybar/scripts/timer.sh".source = pkgs.substituteAll {
+    #   src = ./config/polybar/scripts/polybar-timer/timer.sh;
+    #   cava = "${pkgs.cava}";
+    # };
 
     # Disable middle click paste
     # See [https://unix.stackexchange.com/a/277488]
@@ -195,15 +298,11 @@ tail = true
       b:2 + Release
     '';
 
-  } // desktopFiles;
+  }; # // desktopFiles;
 
   #=============== XSESSION PROGRAMS ==============#
   xsession = {
     enable = true;
-
-    # windowManager.start = ''
-      # systemctl --user restart polybar
-    # '';
 
     windowManager.xmonad = {
       enable = true;
@@ -225,8 +324,11 @@ tail = true
   # You can also manage environment variables but you will have to manually
   # $ source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
   home.sessionVariables = {
-  # systemd.user.sessionVariables = {
     EDITOR = "vim";
+
+    # See eza_colors(5)
+    # Unify colors on permission outputs
+    EZA_COLORS = "ur=96:uw=96:ux=96:ue=96:gr=96:gw=96:gx=96:tr=96:tw=96:tx=96";
   };
 
   programs = {
@@ -237,7 +339,9 @@ tail = true
 
       # Set aliases
       shellAliases = {
+        ls = "eza --icons --git";
         la = "ls -a";
+        lsblk = "lsblk -o NAME,LABEL,FSTYPE,SIZE,FSUSED,MOUNTPOINTS,UUID";
         conf = "code /home/rec1dite/.dotfiles";
       };
 
@@ -263,16 +367,42 @@ tail = true
   };
 
   #=============== RICE ==============#
+  catppuccin = {
+    flavor = "mocha";
+    accent = "red";
+  };
+
+  stylix = {
+    targets = {
+      rofi.enable = false;
+      bat.enable = false;
+      vscode.enable = false;
+      firefox.enable = false;
+
+      # kde.enable = false; # Until [https://github.com/danth/stylix/issues/489] is fixed
+    };
+  };
+
+  xdg = {
+    enable = true;
+  };
+
   # See [https://youtu.be/m_6eqpKrtxk]
   gtk = {
     enable = true;
-    font.name = "Fira Code";
+    # font.name = "Fira Code";
 
     #===== CURSOR =====#
-    cursorTheme = {
-      package = pkgs.bibata-cursors;
-      name = "Bibata-Modern-Ice";
-      size = 10;
+    # cursorTheme = {
+    #   name = "Bibata-Modern-Ice";
+    #   package = pkgs.bibata-cursors;
+    #   size = 6;
+    # };
+
+    #===== ICONS =====#
+    iconTheme = {
+      name = "Papirus";
+      package = pkgs.papirus-icon-theme;
     };
 
     #===== TRAFFIC LIGHTS =====#
@@ -282,24 +412,30 @@ tail = true
     gtk4.extraConfig.gtk-decoration-layout = "menu:none";
 
     #===== GTK THEME =====#
-    theme = {
-      name = "Catppuccin-Mocha-Compact-Blue-Dark";
-      package = pkgs.catppuccin-gtk.override {
-        accents = [ "blue" ];
-        size = "compact";
-        tweaks = [ "rimless" "black" "normal" ];
-        variant = "mocha";
-      };
-    };
+    # theme = {
+    #   name = "Catppuccin-Mocha-Compact-Blue-Dark";
+    #   package = pkgs.catppuccin-gtk.override {
+    #     accents = [ "blue" ];
+    #     size = "compact";
+    #     tweaks = [ "rimless" "black" "normal" ];
+    #     variant = "mocha";
+    #   };
+    # };
   };
 
+  # If Stylix issues with QT persist,
+  # see [https://nix.catppuccin.com/options/home-manager-options.html#qtstylecatppuccinenable]
   qt = {
     enable = true;
-    platformTheme = "gnome";
-    style = {
-      name = "adwaita-dark"; # TODO
+    # platformTheme.name = "kvantum";
+    # style = {
+      # catppuccin = {
+      #   enable = true;
+      #   apply = true;
+      # };
+      # name = "kvantum";
       # package = pkgs.adwaita-qt;
-    };
+    # };
   };
 
   services = {
@@ -312,6 +448,12 @@ tail = true
         # See picom(1) for more 'CONDITION' rules
         "class_g = 'dmenu'"
         "class_g = 'Polybar'"
+        "class_g = 'Firefox' && argb"
+        "window_type = 'menu'"
+        "window_type = 'dropdown_menu'"
+        "window_type = 'popup_menu'"
+        "window_type = 'tooltip'"
+        "window_type = 'utility'" # See [https://github.com/chjj/compton/issues/333#issuecomment-169538630]
       ];
       # shadowOffsets = [-15 -15]; # default
       # shadowOpacity = 0.75; # default
@@ -319,6 +461,35 @@ tail = true
       # fadeDelta = 2;
       # activeOpacity = 0.98;
       # inactiveOpacity = 0.95;
+    };
+
+    #===== FUSUMA =====#
+    # Enable touchpad gestures
+    fusuma = {
+      enable = true;
+      settings = import ./config/fusuma/fusuma.nix;
+    };
+  };
+
+
+  #=============== SYSTEMD SERVICES ==============#
+
+  # See: [https://aur.archlinux.org/cgit/aur.git/tree/greenclip.service?h=rofi-greenclip]
+  systemd.user.services.greenclip = {
+    Unit = {
+      Description = "Greenclip agent";
+      After = "display-manager.service";
+    };
+
+    Service = {
+      Type = "simple";
+      ExecStart = "${pkgs.haskellPackages.greenclip}/bin/greenclip daemon";
+      Restart = "always";
+      # RestartSec = "3s";
+    };
+
+    Install = {
+      WantedBy = [ "default.target" ];
     };
   };
 }

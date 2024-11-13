@@ -176,17 +176,16 @@ in
     #===== YAZI =====#
     yazi = {
       enable = true;
-      theme = {
+      theme = {};
+      keymap = {
+        # manager.keymap = [
+        #   {
+        #     on = ["<C-s>"];
+        #     run = "shell '$SHELL' --block --confirm";
+        #     desc = "Open shell here";
+        #   }
+        # ];
       };
-      # keymap = {
-      #   manager.keymap = [
-      #     {
-      #       on = ["<C-s>"];
-      #       run = "shell '$SHELL' --block --confirm";
-      #       desc = "Open shell here";
-      #     }
-      #   ];
-      # };
     };
   };
 
@@ -264,11 +263,17 @@ tail = true
     ".local/share/rofi/themes/main.rasi".source = ./config/rofi/mocha.rasi;
     ".config/greenclip.toml".source = ./config/rofi/greenclip.toml;
 
+    # Okular
+    ".config/okularpartrc".source = ./config/okular/okularpartrc;
+
     # Cava
     ".config/cava/config".source = ./config/cava/config;
 
     # Blender
     ".config/blender/${blenderVersion}/scripts/presets/interface_theme/mocha_cr1m.xml".source = ./config/blender/mocha_cr1m.xml;
+
+    # UV
+    ".config/uv/uv.toml".source = ./config/uv/uv.toml;
 
     # VLC
     # REMOVED: Broken resizing with tiling WM
@@ -341,6 +346,7 @@ tail = true
       shellAliases = {
         ls = "eza --icons --git";
         la = "ls -a";
+        ll = "ls -la";
         lsblk = "lsblk -o NAME,LABEL,FSTYPE,SIZE,FSUSED,MOUNTPOINTS,UUID";
         conf = "code /home/rec1dite/.dotfiles";
       };
@@ -378,6 +384,7 @@ tail = true
       bat.enable = false;
       vscode.enable = false;
       firefox.enable = false;
+      # chromium.enable = false;
 
       # kde.enable = false; # Until [https://github.com/danth/stylix/issues/489] is fixed
     };
@@ -465,6 +472,7 @@ tail = true
 
     #===== FUSUMA =====#
     # Enable touchpad gestures
+    # Also see: [https://github.com/iberianpig/fusuma-plugin-tap]
     fusuma = {
       enable = true;
       settings = import ./config/fusuma/fusuma.nix;

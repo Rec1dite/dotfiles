@@ -41,7 +41,7 @@
       options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]
     };
 
-    "home/rec1dite/.mnt/c" = {
+    "/home/rec1dite/.mnt/c" = {
       device = "/dev/disk/by-uuid/90D8E4CCD8E4B220";
       fsType = "ntfs-3g";
       options = [ "rw" "uid=1000" ]; # Obtain UID by: [$ id -u rec1dite] or [$ echo $UID]

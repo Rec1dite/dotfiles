@@ -2,7 +2,7 @@
 # See [configuration.nix(5)]
 # See [$ nixos-help]
 
-{ config, lib, pkgs, upkgs, home-manager, mkPoetryApplication, ... }:
+{ config, lib, stdenv, pkgs, upkgs, home-manager, mkPoetryApplication, ... }:
 
 {
   imports =
@@ -17,7 +17,7 @@
     enable = true;
     configurationLimit = 10; # Limit the number of generations in /boot/loader/entries
   };
-  boot.loader.timeout = 1; # As per [https://discourse.nixos.org/t/how-to-add-bootentry-booting-straight-into-latest-generation/33507/2]
+  # boot.loader.timeout = 1; # As per [https://discourse.nixos.org/t/how-to-add-bootentry-booting-straight-into-latest-generation/33507/2]
   boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "ntfs" ];
 
@@ -25,6 +25,7 @@
   #=============== NIX ==============#
   # Enable experimental features
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.trusted-users = [ "root" "rec1dite" ];
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -55,9 +56,7 @@
   #=============== SYSTEM ==============#
   # Enable upower
   services.upower.enable = true;
-  systemd.services.upower.enable = true; #=============== NETWORKING ==============#
-  networking.hostName = "n1x"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  systemd.services.upower.enable = true;
 
   services.tlp = {
     enable = true;
@@ -66,6 +65,10 @@
       # USB_BLACKLIST_PHONE = 1;
     };
   };
+
+  #=============== NETWORKING ==============#
+  networking.hostName = "n1x"; # Define your hostname.
+  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -112,8 +115,13 @@
   #=============== AUDIO + BLUETOOTH ==============#
   # Enable audio via PulseAudio
   sound.enable = true;
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.support32Bit = true; # Enable compatibility with 32-bit apps
+  hardware.pulseaudio = {
+    enable = true;
+    support32Bit = true; # Enable compatibility with 32-bit apps
+    extraConfig = ''
+      autospawn = yes
+    '';
+  };
   nixpkgs.config.pulseaudio = true;
 
   # If pulseaudio fails to start, try:
@@ -251,6 +259,7 @@
     brightnessctl
     cifs-utils
     coreutils
+    exiftool
     eza
     file
     git
@@ -266,7 +275,6 @@
     pciutils
     playerctl
     ripgrep
-    ripgrep
     sxiv
     tree
     toybox # Bunch of command line utils
@@ -280,6 +288,8 @@
 
     #== Programming ==#
     vim
+    upkgs.devenv
+    upkgs.zed-editor
     haskell-language-server
     ghc
     manix
@@ -318,6 +328,7 @@
     gcc
     gnumake
     python3 # See [https://nixos.wiki/wiki/Python]
+    upkgs.uv
 
     #== Navigation ==#
     dmenu
@@ -330,11 +341,13 @@
     (blender.override { cudaSupport = true; })
     cava
     firefox
+    chromium
     tor-browser
     keepass
     imagemagick7
     neofetch
     obs-studio
+    obsidian
     okular
     xournalpp
     youtube-music
@@ -385,6 +398,7 @@
       })
     )
 
+    # See: [https://ryantm.github.io/nixpkgs/builders/trivial-builders/]
   ];
 
   #=============== ADDITIONAL INITIALIZATION ==============#
@@ -500,30 +514,12 @@
 
     # To access the container shell:
     # sudo machinectl shell rec2dite@n2x /usr/bin/env bash --login
-    n2x = {
+    # n2x = {
+    #   config = import ./n2x/configuration.nix { inherit pkgs; };
+    # };
 
-      config = { config, pkgs, ... }: {
-        #----- Config container -----#
-        # imports = [ (import "${home-manager}/nixos") ];
-
-        system.stateVersion = "24.05";
-        nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-        users.users.rec2dite = {
-          uid = 1000;
-          isNormalUser = true;
-          initialPassword = "password";
-          extraGroups = [ "wheel" ];
-        };
-
-        environment.systemPackages = with pkgs; [ vim ];
-
-        environment.variables = {
-          EDITOR = "vim";
-          TERM = "xterm-256color";
-        };
-      };
-
+    labpc = {
+      config = import ./devops/configuration.nix { inherit pkgs lib stdenv; };
     };
   };
 }

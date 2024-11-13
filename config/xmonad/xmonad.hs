@@ -161,8 +161,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     , ((modm,xK_p), spawn "rofi -show drun -monitor -4")
     -- capture area screenshot
     , ((modm .|. shiftMask, xK_s), spawn "flameshot gui")
-    -- launch firefox
+    -- firefox normal tab
     , ((modm, xK_bracketleft), spawn "firefox")
+    -- firefox incognito tab
+    , ((modm .|. shiftMask, xK_bracketleft), spawn "firefox --private-window")
     -- launch yazi
     , ((modm, xK_o), spawn "kitty 'yazi'")
     -- launch dmenu

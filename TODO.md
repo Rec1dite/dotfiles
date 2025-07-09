@@ -2,7 +2,6 @@
     - [x] Launch on login
     - [x] XMonad integration
     - [ ] Additional extensions; See: [https://discourse.nixos.org/t/home-manager-home-file-multi-sourcing/33224/2]
-    - [ ] Word of the day script
 
 - [x] Patch rofi-emoji
 
@@ -12,6 +11,12 @@
 
 - [ ] Disable touchpad when typing
 
-- [ ] XMonad workspace names
+- [x] XMonad workspace names
 
 - [x] GMail .desktop icon
+
+- [x] Fix Cava
+
+- [ ] Command tab completion with dmenu 'dynamicoptions' patch
+
+- [x] Processing Catppuccin [[~/code/sketchbook/theme.txt]]

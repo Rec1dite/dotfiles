@@ -6,7 +6,7 @@
 	url = https://github.com/catppuccin/youtubemusic
 [submodule "config/polybar/scripts/espr"]
 	path = config/polybar/scripts/espr
-	url = https://github.com/Rec1dite/espr
+	url = https://github.com/rec1dite/espr
 [submodule "config/polybar/scripts/polybar-cava"]
 	path = config/polybar/scripts/polybar-cava
 	url = https://github.com/ray-pH/polybar-cava

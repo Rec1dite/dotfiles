@@ -16,12 +16,12 @@ mode = scientific
 
 # Manual sensitivity in %. If autosens is enabled, this will only be the initial value.
 # 200 means double height. Accepts only non-negative values.
-; sensitivity = 100
+; sensitivity = 80
 
 # The number of bars (0-200). 0 sets it to auto (fill up console).
 # Bars' width and space between bars in number of characters.
- bars = 50
- bar_width = 5
+ bars = 0
+ bar_width = 2
 ; bar_spacing = 1
 # bar_height is only used for output in "noritake" format
 ; bar_height = 32
@@ -45,7 +45,6 @@ mode = scientific
 
 
 [input]
-
 # Audio capturing method. Possible methods are: 'pulse', 'alsa', 'fifo', 'sndio' or 'shmem'
 # Defaults to 'pulse', 'alsa' or 'fifo', in that order, dependent on what support cava was built with.
 #
@@ -58,8 +57,11 @@ mode = scientific
 # For alsa 'source' will be the capture device.
 # For fifo 'source' will be the path to fifo-file.
 # For shmem 'source' will be /squeezelite-AA:BB:CC:DD:EE:FF where 'AA:BB:CC:DD:EE:FF' will be squeezelite's MAC address
-; method = pulse
-; source = auto
+
+# See [https://github.com/karlstav/cava/issues/422#issuecomment-994270910]
+method = pulse
+source = auto # Use `pactl list sources` or `pacmd list-sources` & insert the exact source no. to use a specific device (E.g. `2`)
+# For `auto`, the correct audio device must be selected as the 'fallback' in pavucontrol
 
 ; method = alsa
 ; source = hw:Loopback,1
@@ -193,7 +195,7 @@ gravity = 200
 # Noise reduction, float 0 - 1. default 0.77
 # the raw visualization is very noisy, this factor adjusts the integral and gravity filters to keep the signal smooth
 # 1 will be very slow and smooth, 0 will be fast but noisy.
-; noise_reduction = 0.77
+; noise_reduction = 0.60
 
 
 [eq]

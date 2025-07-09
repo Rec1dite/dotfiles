@@ -6,6 +6,7 @@
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
+    # ./nixos-hardware/asus/rog-strix/g733qs
   ];
 
   boot = {

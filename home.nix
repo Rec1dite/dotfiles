@@ -60,14 +60,71 @@ in
     '') ];
 
   programs = {
+    #===== SSH =====#
+    ssh = {
+      enable = true;
+
+      matchBlocks = {
+        #----- GitHub -----#
+        "github-rec1dite" = {
+          hostname = "github.com";
+          user = "git";
+          identityFile = "/home/rec1dite/.ssh/id_ed25519_rec1dite";
+        };
+        "github-digir" = {
+          hostname = "github.com";
+          user = "git";
+          identityFile = "/home/rec1dite/.ssh/id_ed25519_digir";
+        };
+
+        #----- Misc -----#
+        "bdclient.cs.up.ac.za" = {
+          hostname = "bdclient.cs.up.ac.za";
+          user = "techteam";
+        };
+      };
+    };
+
     #===== GIT =====#
     git = {
       enable = true;
-      userName = "Rec1dite";
-      userEmail = "rec1dite@gmail.com";
+
+      includes = [
+        {
+          condition = "gitdir:~/repos/";
+          contents = {
+            user.name  = "Rec1dite";
+            user.email = "rec1dite@gmail.com";
+
+            # Auto substitute to the correct SSH host
+            url."git@github-rec1dite:".insteadOf = ["git@github.com:" "https://github.com/"];
+          };
+        }
+
+        {
+          condition = "gitdir:~/grad/";
+          contents = {
+            user.name  = "digir";
+            user.email = "dino.gironi@bbd.co.za";
+
+            url."git@github-digir:".insteadOf = ["git@github.com:" "https://github.com/"];
+          };
+        }
+      ];
+
+      extraConfig = {
+        core = {
+          editor = "code --wait";
+          autocrlf = true;
+        };
+        diff.tool = "vscode";
+        merge.tool = "vscode";
+        "difftool \"vscode\"".cmd = "code --wait --diff $LOCAL $REMOTE";
+        "mergetool \"vscode\"".cmd = "code --wait $MERGED";
+      };
 
       aliases = {
-        graph = "";
+        graph = "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all";
       };
       # lfs.enable = true;
 
@@ -119,17 +176,20 @@ in
 
       plugins = [ rofi-emoji ];
 
+      # See: [$ rofi -help]
+      # and: [$ rofi -dump-config | less]
       extraConfig = {
         modi = "run,emoji,drun,clipboard:greenclip print,window";
         # icon-theme = "Oranchelo";
+        # window-thumbnail = true;
         icon-theme = "Papirus";
         show-icons = true;
         terminal = "kitty";
         drun-display-format = "{icon} {name}";
         disable-history = false;
         hide-scrollbar = true;
-        display-drun = "   Apps ";
-        display-run = "   Run ";
+        display-drun = "   Apps";
+        display-run = "   Run";
         display-emoji = " 󰞅 Emoji";
         display-window = " 󰕰 Window";
         display-clipboard = " 󱉣  Clipboard";
@@ -174,17 +234,99 @@ in
     # TODO: trayer, bat-extras, zellij
 
     #===== YAZI =====#
-    yazi = {
+    # See [https://yazi-rs.github.io/docs/installation/#nix]
+    yazi = let
+      plugins = pkgs.fetchFromGitHub {
+        owner = "yazi-rs";
+        repo = "plugins";
+        rev = "main";
+        hash = "sha256-mQkivPt9tOXom78jgvSwveF/8SD8M2XCXxGY8oijl+o=";
+      };
+      starship = pkgs.fetchFromGitHub {
+        owner = "Rolv-Apneseth";
+        repo = "starship.yazi";
+        rev = "main";
+        hash = "sha256-wESy7lFWan/jTYgtKGQ3lfK69SnDZ+kDx4K1NfY4xf4=";
+      };
+      rich-preview = pkgs.fetchFromGitHub {
+        owner = "AnirudhG07";
+        repo = "rich-preview.yazi";
+        rev = "main";
+        hash = "sha256-TwL0gIcDhp0hMnC4dPqaVWIXhghy977DmZ+yPoF/N98=";
+      };
+      bookmarks = pkgs.fetchFromGitHub {
+        owner = "dedukun";
+        repo = "bookmarks.yazi";
+        rev = "main";
+        hash = "sha256-GLi6X06irj3sS8FoOMPz2mFSlf60dO7GDYq10omQiOs=";
+      };
+    in {
       enable = true;
+      # shellWrapperName = "y";
       theme = {};
+      settings = {
+        plugin = {
+          prepend_fetchers = [
+            { id = "git"; name = "*";  run = "git"; }
+            { id = "git"; name = "*/"; run = "git"; }
+          ];
+          prepend_previewers = [
+            { name = "*.csv";   run = "rich-preview"; }
+            { name = "*.ipynb"; run = "rich-preview"; }
+            { name = "*.json";  run = "rich-preview"; }
+            { name = "*.md";    run = "rich-preview"; }
+            { name = "*.rst";   run = "rich-preview"; }
+          ];
+        };
+        preview = {
+        };
+      };
       keymap = {
-        # manager.keymap = [
-        #   {
-        #     on = ["<C-s>"];
-        #     run = "shell '$SHELL' --block --confirm";
-        #     desc = "Open shell here";
-        #   }
-        # ];
+        manager.prepend_keymap = [
+          {
+            on = [ "c" "m" ];
+            run = "plugin chmod";
+            desc = "chmod selected files";
+          }
+          {
+            on = "T";
+            run = "plugin --sync max-preview";
+            desc = "Toggle maximized preview";
+          }
+          {
+            on = "<c-L>";
+            run = "plugin --sync hide-preview";
+            desc = "Toggle preview visibility";
+          }
+          {
+            on = "m";
+            run = "plugin bookmarks --args=save";
+            desc = "Save current position as a bookmark";
+          }
+          {
+            on = "'";
+            run = "plugin bookmarks --args=jump";
+            desc = "Jump to a bookmark";
+          }
+          {
+            on = [ "b" "d" ];
+            run = "plugin bookmarks --args=delete";
+            desc = "Delete a bookmark";
+          }
+          {
+            on = [ "b" "D" ];
+            run = "plugin bookmarks --args=delete_all";
+            desc = "Delete all bookmarks";
+          }
+        ];
+
+      };
+      plugins = {
+        inherit starship rich-preview bookmarks;
+        chmod = "${plugins}/chmod.yazi";
+        git = "${plugins}/git.yazi";
+        hide-preview = "${plugins}/hide-preview.yazi";
+        max-preview = "${plugins}/max-preview.yazi";
       };
     };
   };
@@ -275,6 +417,9 @@ tail = true
     # UV
     ".config/uv/uv.toml".source = ./config/uv/uv.toml;
 
+    # PNPM
+    ".config/pnpm/rc".source = ./config/pnpm/rc;
+
     # VLC
     # REMOVED: Broken resizing with tiling WM
     # ".local/share/vlc/skins2/Arc-Dark.vlt".source = ./config/vlc/Arc-Dark.vlt;
@@ -349,6 +494,7 @@ tail = true
         ll = "ls -la";
         lsblk = "lsblk -o NAME,LABEL,FSTYPE,SIZE,FSUSED,MOUNTPOINTS,UUID";
         conf = "code /home/rec1dite/.dotfiles";
+        clock = "tty-clock -scC 1";
       };
 
       # Bashrc configs
@@ -367,7 +513,13 @@ tail = true
 
         set nu
         set rnu
+
+        set hlsearch
       '';
+    };
+
+    neovim = {
+      enable = true;
     };
 
   };

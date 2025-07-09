@@ -2,13 +2,14 @@
 # See [configuration.nix(5)]
 # See [$ nixos-help]
 
-{ config, lib, stdenv, pkgs, upkgs, home-manager, mkPoetryApplication, ... }:
+{ config, lib, stdenv, pkgs, upkgs, home-manager, mkPoetryApplication, ... }@inputs:
 
 {
   imports =
     [
       ./hardware-configuration.nix
       ./xmonad.nix
+      ./an.nix
     ];
 
   #=============== BOOT ==============#
@@ -17,8 +18,7 @@
     enable = true;
     configurationLimit = 10; # Limit the number of generations in /boot/loader/entries
   };
-  # boot.loader.timeout = 1; # As per [https://discourse.nixos.org/t/how-to-add-bootentry-booting-straight-into-latest-generation/33507/2]
-  boot.loader.efi.canTouchEfiVariables = true;
+  # boot.loader.timeout = 1; # As per [https://discourse.nixos.org/t/how-to-add-bootentry-booting-straight-into-latest-generation/33507/2] boot.loader.efi.canTouchEfiVariables = true;
   boot.supportedFilesystems = [ "ntfs" ];
 
 
@@ -30,15 +30,14 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # Leave as-is
-  system.stateVersion = "24.05";
+  system.stateVersion = "24.05"; # LEAVE AS-IS, NEVER CHANGE
 
   # Automatic garbage collection + optimisation
-  nix.gc = {
-    automatic = true;
-    dates = "weekly";
-    options = "--delete-older-than 30d";
-  };
+  # nix.gc = {
+  #   automatic = true;
+  #   dates = "weekly";
+  #   options = "--delete-older-than 30d";
+  # };
   nix.settings.auto-optimise-store = true;
 
   system.autoUpgrade = {
@@ -67,20 +66,40 @@
   };
 
   #=============== NETWORKING ==============#
-  networking.hostName = "n1x"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  # See [https://nixos.wiki/wiki/Networking]
+  networking = {
+    hostName = "n1x"; # Define your hostname.
+    # wireless = {
+    #   enable = true;  # Enables wireless support via wpa_supplicant.
+    #   userControlled.enable = true;
+    # };
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+    # Configure network proxy if necessary
+    # proxy.default = "http://user:password@proxy:port/";
+    # proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+    # Enable networking
+    networkmanager.enable = true;
 
-  # Set your time zone.
+    hosts = {
+      # "127.0.0.1" = [
+      #   "www.reddit.com"
+      #   "www.instagram.com"
+      # ];
+    };
+
+    # Configure firewall
+    # See [https://nixos.wiki/wiki/Firewall]
+    # nftables.enable = true;
+    firewall = {
+      enable = true;
+      # allowedTCPPorts = [];
+      # allowedUDPPortRanges = [];
+    };
+  };
+
+
   time.timeZone = "Africa/Johannesburg";
-
-  # Select internationalisation properties.
   i18n.defaultLocale = "en_ZA.UTF-8";
 
 
@@ -101,6 +120,7 @@
   };
 
   # Configure input devices
+  # See [https://discourse.nixos.org/t/xorg-libinput-configuration-seems-to-be-ignored/15504]
   services.libinput = {
     enable = true;
 
@@ -108,15 +128,14 @@
     touchpad = {
       naturalScrolling = true;
       disableWhileTyping = true;
+      tapping = false;
     };
   };
 
 
   #=============== AUDIO + BLUETOOTH ==============#
-  # Enable audio via PulseAudio
-  sound.enable = true;
   hardware.pulseaudio = {
-    enable = true;
+    enable = false;
     support32Bit = true; # Enable compatibility with 32-bit apps
     extraConfig = ''
       autospawn = yes
@@ -154,21 +173,22 @@
   fonts.packages = with pkgs; [
     (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
     noto-fonts
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
     noto-fonts-emoji
     liberation_ttf
     fira-code
     fira-code-symbols
+    roboto
+    texlivePackages.nunito
   ];
 
 
   #=============== GPU ==============#
   # See [https://nixos.wiki/wiki/Nvidia#Modifying_NixOS_Configuration]
   # Enable OpenGL
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
+    enable32Bit = true;
   };
 
   # Load Nvidia driver for Xorg (& Wayland)
@@ -238,7 +258,7 @@
   users.users.rec1dite = {
     isNormalUser = true;
     description = "Rec1dite";
-    extraGroups = [ "networkmanager" "wheel" "audio" "mlocate" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "audio" "mlocate" "docker" "ydotool" ];
     packages = with pkgs; [];
   };
 
@@ -250,69 +270,7 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    #== System utils ==#
-    alsa-lib
-    alsa-plugins
-    alsa-utils
-    bottom
-    brightnessctl
-    cifs-utils
-    coreutils
-    exiftool
-    eza
-    file
-    git
-    gparted
-    htop
-    kitty
-    lshw
-    mpv
-    mtr
-    neofetch
-    nix-index # Enables `nix-locate`
-    p7zip
-    pciutils
-    playerctl
-    ripgrep
-    sxiv
-    tree
-    toybox # Bunch of command line utils
-    unzip
-    wget
-    xmonad-log
-    xorg.xev
-    zip
-    # libsForQt5.qtstyleplugin-kvantum
-    libsForQt5.qt5ct
-
-    #== Programming ==#
-    vim
-    upkgs.devenv
-    upkgs.zed-editor
-    haskell-language-server
-    ghc
-    manix
-    just
-    nix-output-monitor
-    nil
-    nixpkgs-fmt
-    nix-init # Easy Nix package generation from URLs
-    upkgs.devbox
-    gnome.adwaita-icon-theme
-    gtk3
-    glib
-    gsettings-desktop-schemas
-    # (arrayfire.override { cudaSupport = true; } )
-
-    # For disabling middle click paste
-    xbindkeys
-    xdotool
-    xsel
-
-    #== System config ==#
-    arandr
-    nitrogen
+  environment.systemPackages = (with pkgs; [
     (catppuccin-sddm.override {
       flavor = "mocha";
       font  = "Fira Code";
@@ -321,41 +279,7 @@
       loginBackground = false;
     })
 
-    #== Nvidia ==#
-    cudatoolkit
-
-    #== Compilation ==#
-    gcc
-    gnumake
-    python3 # See [https://nixos.wiki/wiki/Python]
-    upkgs.uv
-
-    #== Navigation ==#
-    dmenu
-    gnome.nautilus
-    ranger
-    rofi
-    haskellPackages.greenclip
-
-    #== Desktop applications ==#
     (blender.override { cudaSupport = true; })
-    cava
-    firefox
-    chromium
-    tor-browser
-    keepass
-    imagemagick7
-    neofetch
-    obs-studio
-    obsidian
-    okular
-    xournalpp
-    youtube-music
-    vlc
-    yt-dlp
-    ffmpeg_7
-    vesktop
-    transmission-gtk
 
     # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overrides]
     (tauon.overrideAttrs (final: prev: {
@@ -376,6 +300,8 @@
         cp $themeSrc/Cr1m.ttheme $out/share/tauon/theme
         '';
     }))
+
+    (pkgs.callPackage ./derivations/hints {})
 
     #== Temp FHS environment ==#
     # For quick execution of arbitrary binaries requiring FHS conformity
@@ -399,12 +325,25 @@
     )
 
     # See: [https://ryantm.github.io/nixpkgs/builders/trivial-builders/]
-  ];
+  ]);
 
   #=============== ADDITIONAL INITIALIZATION ==============#
   # Global env vars
   environment.variables = {
     EDITOR = "vim";
+
+    # Enable accessibility for `hints`
+    # See [https://github.com/AlfredoSequeida/hints?tab=readme-ov-file#system-requirements]
+    ACCESSIBILITY_ENABLED = "1";
+    GTK_MODULES = "gail:atk-bridge";
+    OOO_FORCE_DESKTOP = "gnome";
+    GNOME_ACCESSIBILITY = "1";
+    QT_ACCESSIBILITY = "1";
+    QT_ACCESSIBILITY_ALWAYS_ON = "1";
+
+    # TODO: Hints packaging
+    # See: [https://github.com/AlfredoSequeida/hints/issues/30]
+    # and: [https://github.com/NixOS/nixpkgs/issues/376993]
   };
 
   environment.extraInit = ''
@@ -414,8 +353,10 @@
   #=============== RICE ==============#
   stylix = {
     enable = true;
+    # See [https://github.com/SenchoPens/base16.nix/tree/main#%EF%B8%8F-troubleshooting]
     base16Scheme = import ./config/stylix/cr1m.nix;
-    image = /home/rec1dite/media/wallpapers/koiFlowers.jpg;
+    # base16Scheme = ./config/stylix/cr1m.yaml;
+    image = ./config/stylix/koiFlowers.jpg;
 
     cursor = {
       name = "Bibata-Modern-Ice";
@@ -427,10 +368,11 @@
 
     fonts = {
       sizes.applications = 10;
+      # sansSerif = { package = pkgs.hack-font; name = "Hack"; };
+
       # serif = { package = pkgs.liberation_ttf; name = "Liberation Serif"; };
       # sansSerif = { package = pkgs.liberation_ttf; name = "Liberation Sans"; };
       # sansSerif = { package = pkgs.fira-code; name = "Fira Code"; };
-      sansSerif = { package = pkgs.hack-font; name = "Hack"; };
       # monospace = { package = pkgs.fira-code; name = "Fira Code"; };
       # emoji = { package = pkgs.fira-code-nerdfont; name = "Fira Code"; };
     };
@@ -438,14 +380,14 @@
 
   # See [https://nixos.wiki/wiki/KDE]
   # and [https://discourse.nixos.org/t/catppuccin-kvantum-not-working/43727/14]
-  # qt = {
-    # enable = true;
-    # platformTheme = "gnome";
-    # style = "adwaita";
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
+    style = "adwaita";
 
     # platformTheme = "qt5ct";
     # style = "kvantum";
-  # };
+  };
 
   # xdg.configFile = let
   #   accent = "Red";
@@ -473,6 +415,8 @@
   # Disable AskPass (annoying GUI pop-up when Git asks for credentials)
   programs.ssh.askPassword = "";
 
+  programs.nix-ld.enable = true;
+
   services.locate = {
     enable = true;
     package = pkgs.mlocate;
@@ -494,15 +438,26 @@
     }));
   };
 
-  programs.dconf = {
+  # services.gvfs = { enable = true; };
+
+  programs.dconf = { enable = true; };
+
+  # services.dnsmasq = { enable = true; };
+
+  virtualisation.docker = { enable = true; };
+
+  services.teamviewer = { enable = true; };
+
+  # `hints` dependencies
+  services.gnome.at-spi2-core = { enable = true; };
+  programs.ydotool.enable = true;
+
+  services.postgresql.enable = true;
+  services.pgadmin = {
+    initialEmail = "rec1dite@gmail.com";
+    initialPasswordFile = ./config/postgres/.pgadmin_pass;
     enable = true;
   };
-
-  # Enable Docker
-  virtualisation.docker = {
-    enable = true;
-  };
-
 
   # Setup lightweight NixOS container
   # See [https://msucharski.eu/posts/application-isolation-nixos-containers]

@@ -1,3 +1,4 @@
+-- Symbols reference: [https://xmonad.github.io/xmonad-docs/xmonad-contrib/doc-index-All.html]
 -- [https://github.com/haskell/haskell-language-server/issues/236#issuecomment-864827647]
 -- [https://github.com/haskell/haskell-language-server/issues/2932#issuecomment-1139531151]
 -- [https://github.com/haskell/haskell-language-server/issues/2932]
@@ -44,10 +45,12 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.ResizableThreeColumns
 
 import XMonad.Actions.Warp (warpToWindow)
-import XMonad.Actions.WorkspaceNames
+-- import XMonad.Actions.WorkspaceNames
 
 import XMonad.Actions.DynamicProjects   -- TODO: Look into adding this
-import XMonad.Actions.DynamicWorkspaceGroups
+-- import XMonad.Actions.DynamicWorkspaceGroups
+import XMonad.Actions.DynamicWorkspaces
+import XMonad.Actions.CycleWS
 
 --Xmobar Integration Requirements
 import XMonad.Hooks.DynamicLog
@@ -73,7 +76,7 @@ import Data.ByteString.Char8 (split)
 import Data.List (splitAt, intercalate, concat)
 import Codec.Binary.UTF8.Generic (take)
 import XMonad.Util.Loggers (loadAvg, padL, logCmd, logCurrentOnScreen, logTitleOnScreen, logWhenActive)
-import XMonad.Actions.PhysicalScreens (getScreen)
+import XMonad.Actions.PhysicalScreens (getScreen, viewScreen, sendToScreen, verticalScreenOrderer)
 import XMonad.Util.WorkspaceCompare (getSortByXineramaPhysicalRule, getSortByXineramaRule)
 import XMonad.Layout.NoFrillsDecoration (noFrillsDeco)
 import XMonad.Prompt.Layout (layoutPrompt)
@@ -87,13 +90,15 @@ myScreenLayout = "~/.screenlayout/battery.sh"
 borderRed = "#f43e5c"
 borderGrey = "#1e1e2e"
 
+spacingStep = 4
+
 -- The default number of workspaces (virtual screens) and their names.
 -- By default we use numeric strings, but any string may be used as a
 -- workspace name. The number of workspaces is determined by the length
 -- of this list.
 -- > workspaces = ["web", "irc", "code" ] ++ map show [4..9]
 -- See [https://stackoverflow.com/a/60683742] for using Nerd Font icons
-myWorkspaces = ["1","2","3","4","5","6","7","8","9"]
+myWorkspaces = ["1","2","3","4","5","6","7","8","9","0"]
 
 myIcons :: Query [String]
 myIcons = composeAll [
@@ -107,7 +112,7 @@ myIcons = composeAll [
 -- thenMouseWarp operation = sequence_ [operation, warpToWindow (1%1) (1%1)]
 thenMouseWarp = id
 
-myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
+myKeyBindings conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
 
     ---------- AUDIO/MUSIC ----------
 
@@ -134,23 +139,16 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     , ((0,0x1008ff31), spawn "playerctl play-pause")
 
 
-    ---------- KEYBOARD BRIGHTNESS ----------
+    ---------- MISC ----------
 
     -- keyboard brightness down
-    , ((0,0x1008ff06), spawn "sudo su -c 'rogauracore brightness 0'") -- TODO: Work out how to do this with root priviledges
+    -- , ((0,0x1008ff06), spawn "sudo su -c 'rogauracore brightness 0'") -- REMOVED: No longer using rogauracore
     -- keyboard brightness up
-    , ((0,0x1008ff05), spawn "sudo su -c 'rogauracore brightness 2'") -- TODO: Same as above
-
-    -- hide focused window
-    , ((modm, xK_BackSpace), withFocused hideWindow)
-    -- unhide last hidden window
-    , ((modm .|. shiftMask, xK_BackSpace), popNewestHiddenWindow)
-    -- rename current workspace
-    , ((modm .|. shiftMask,xK_z), renameWorkspace def)
-    -- warp mouse to active window
-    , ((modm,xK_z), warpToWindow (1%2) (1%2))
+    -- , ((0,0x1008ff05), spawn "sudo su -c 'rogauracore brightness 2'") -- REMOVED: Likewise
     -- launch screenshot utility
     , ((0, xK_Print), spawn "flameshot launcher")
+    -- lock screen
+    , ((modm .|. shiftMask, xK_backslash), spawn "slock")
 
 
     ---------- LAUNCH APPLICATIONS ----------
@@ -173,59 +171,82 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
 
     ---------- LAYOUTS ----------
 
-    -- Rotate through the available layout algorithms
+    -- rotate through the available layout algorithms
     , ((modm,               xK_space ), sendMessage NextLayout)
-    -- Simulate selecting the previous layout by going to the next one n-1 times
+    -- simulate selecting the previous layout by going to the next one n-1 times
     , ((modm .|. controlMask, xK_space), sequence_ $ replicate 5 $ sendMessage NextLayout)
-    --  Reset the layouts on the current workspace to default
+    -- reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
 
 
     ---------- LAYOUT GROUPS ----------
     -- TODO
-    , ((modm, xK_n), promptWSGroupAdd def "Add Group: ")
-    , ((modm, xK_g), promptWSGroupView def "Go to group: ")
-    , ((modm, xK_d), promptWSGroupForget def "Forget group: ")
+    -- , ((modm, xK_n), promptWSGroupAdd def "Add Group: ")
+    -- , ((modm, xK_g), promptWSGroupView def "Go to group: ")
+    -- , ((modm, xK_d), promptWSGroupForget def "Forget group: ")
 
     ---------- WINDOW MANAGEMENT ----------
 
-    -- Resize viewed windows to the correct size
-    , ((modm .|. shiftMask, xK_backslash), spawn "slock")
-    -- Resize viewed windows to the correct size
+    -- resize viewed windows to the correct size
     , ((modm,               xK_n     ), refresh)
-    -- Move focus to the next window
+    -- move focus to the next window
     , ((modm,               xK_Tab   ), windows W.focusDown)
-    -- Move focus to the next window
+    -- move focus to the next window
     , ((modm,               xK_j     ), thenMouseWarp $ windows W.focusDown)
-    -- Move focus to the previous window
+    -- move focus to the previous window
     , ((modm,               xK_k     ), thenMouseWarp $ windows W.focusUp)
-    -- Move focus to the master window
+    -- move focus to the master window
     , ((modm,               xK_m     ), thenMouseWarp $ windows W.focusMaster)
-    -- Swap the focused window and the master window
+    -- swap the focused window and the master window
     , ((modm,               xK_Return), thenMouseWarp $ windows W.swapMaster)
-    -- Swap the focused window with the next window
+    -- swap the focused window with the next window
     , ((modm .|. shiftMask, xK_j     ), thenMouseWarp $ windows W.swapDown)
-    -- Swap the focused window with the previous window
+    -- swap the focused window with the previous window
     , ((modm .|. shiftMask, xK_k     ), thenMouseWarp $ windows W.swapUp)
-    -- Shrink the master area
+    -- shrink the master area
     , ((modm,               xK_h     ), sendMessage Shrink)
-    -- Expand the master area
+    -- expand the master area
     , ((modm,               xK_l     ), sendMessage Expand)
-    -- BSP expand/shrink
+    -- bsp expand/shrink
     , ((modm .|. controlMask, xK_j     ), sendMessage $ ExpandTowards D)
-    , ((modm .|. controlMask, xK_k     ), sendMessage $ ExpandTowards U)
-    , ((modm .|. controlMask, xK_h     ), sendMessage $ ExpandTowards L)
+    , ((modm .|. controlMask, xK_k     ), sendMessage $ ShrinkFrom D)
+    , ((modm .|. controlMask, xK_h     ), sendMessage $ ShrinkFrom R)
     , ((modm .|. controlMask, xK_l     ), sendMessage $ ExpandTowards R)
-    -- Shrink the master area
+    -- shrink the master area
     , ((modm .|. shiftMask, xK_h     ), sendMessage MirrorShrink)
-    -- Expand the master area
+    -- expand the master area
     , ((modm .|. shiftMask, xK_l     ), sendMessage MirrorExpand)
-    -- Push window back into tiling
+    -- push window back into tiling
     , ((modm,               xK_t     ), withFocused $ windows . W.sink)
-    -- Increment the number of windows in the master area
-    , ((modm              , xK_comma ), sendMessage (IncMasterN 1))
-    -- Deincrement the number of windows in the master area
-    , ((modm              , xK_period), sendMessage (IncMasterN (-1)))
+    -- increment the number of windows in the master area
+    , ((modm,               xK_comma ), sendMessage (IncMasterN 1))
+    -- deincrement the number of windows in the master area
+    , ((modm,               xK_period), sendMessage (IncMasterN (-1)))
+
+    -- cycle through workspaces
+    , ((modm,               xK_f),  nextWS)
+    , ((modm,               xK_b),  prevWS)
+    , ((modm .|. shiftMask, xK_f),  shiftToNext)
+    , ((modm .|. shiftMask, xK_b),  shiftToPrev)
+
+    -- adjust window spacing
+    , ((modm .|. shiftMask, xK_minus), sequence_ [ incScreenSpacing $ spacingStep `div` 2, incWindowSpacing spacingStep ])
+    , ((modm .|. shiftMask, xK_equal), sequence_ [ decScreenSpacing $ spacingStep `div` 2, decWindowSpacing spacingStep ])
+
+
+    -- hide focused window
+    , ((modm, xK_BackSpace), withFocused hideWindow)
+    -- unhide last hidden window
+    , ((modm .|. shiftMask, xK_BackSpace), popNewestHiddenWindow)
+    -- rename current workspace
+    , ((modm .|. shiftMask, xK_z), renameWorkspace $ def {
+        -- See [https://hackage.haskell.org/package/xmonad-contrib-0.18.1/docs/XMonad-Prompt.html#t:XPConfig]
+        bgColor = "#1e1e2e",
+        fgColor = "#bac2de",
+        borderColor = "#f43e5c"
+    })
+    -- warp mouse to active window
+    , ((modm,xK_z), warpToWindow (1%2) (1%2))
 
 
     ---------- UTILITIES ----------
@@ -236,10 +257,12 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     , ((modm,               xK_u), spawn myScreenLayout)
     -- lock the screen
     , ((modm .|. shiftMask, xK_c), kill)
-    -- Quit xmonad
-    , ((modm .|. shiftMask, xK_q     ), io $ exitWith ExitSuccess)
-    -- Restart xmonad
+    -- quit xmonad
+    , ((modm .|. controlMask .|. shiftMask, xK_q     ), io $ exitWith ExitSuccess)
+    -- restart xmonad
     , ((modm              , xK_q     ), spawn "xmonad --restart; polybar-msg cmd restart")
+    -- TODO: Fix polybar appearing in front of fullscreen window after restart
+    -- See: [https://github.com/xmonad/xmonad-contrib/issues/211]
 
     ---------- REMOVED ----------
 
@@ -251,28 +274,40 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $ [
     -- undo split screen
     -- , ((modm .|. shiftMask, xK_slash), rescreen)
 
-    -- Toggle the status bar gap
+    -- toggle the status bar gap
     -- Use this binding with avoidStruts from Hooks.ManageDocks.
     -- See also [https://xmonad.github.io/xmonad-docs/xmonad-contrib/XMonad-Hooks-DynamicLog.html#v:statusBar]
     -- , ((modm              , xK_b     ), sequence_ [spawn "polybar-msg cmd toggle", sendMessage ToggleStruts])
+    ] ++
 
-    -- Run xmessage with a summary of the default keybindings (useful for beginners)
-    -- , ((modm .|. shiftMask, xK_slash ), spawn "echo \"Help dialog has been removed\" | xmessage -file -bg '#1c1e26' -fg '#f43e5c'")
+    ---------- WORKSPACES ----------
+    -- Renaming workspaces:
+    --    See [https://www.reddit.com/r/xmonad/comments/34w02a/interactive_workspace_rename_in_xmonad]
+    --    and [https://unix.stackexchange.com/questions/217213/getting-xmonad-to-show-name-of-current-workspace-in-xmobar]
 
+    -- mod-[1..9, 0], Switch to workspace N
+    -- mod-shift-[1..9, 0], Move client to workspace N
+    [((m .|. modm, k), windows $ f i)
+    | (i, k) <- zip (XMonad.workspaces conf) ([xK_1 .. xK_9] ++ [xK_0])
+    , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]
     ]
 
+    -- [((m .|. modm, k), windows $ W.greedyView $ XMonad.workspaces conf)]
+
     ++
-    -- mod-[1..9], Switch to workspace N
-    -- mod-shift-[1..9], Move client to workspace N
-    [((m .|. modm, k), windows $ f i)
-        | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
-        , (f, m) <- [(W.greedyView, 0), (W.shift, shiftMask)]]
-    ++
-    -- mod-{w,e,r}, Switch to physical/Xinerama screens 1, 2, or 3
+
+    -- Old, used Xinerama ScreenIDs, which don't necessarily correspond to physical placement
+    -- [ ((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
+    -- | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    -- , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]
+    -- ]
+
+    -- mod-{w,e,r}, Switch to Xinerama screens based on physical layout
     -- mod-shift-{w,e,r}, Move client to screen 1, 2, or 3
-    [((m .|. modm, key), screenWorkspace sc >>= flip whenJust (windows . f))
-        | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
-        , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+    [ ((m .|. modm, key), f sc)
+    | (key, sc) <- zip [xK_w, xK_e, xK_r] [0..]
+    , (f, m) <- [(viewScreen def, 0), (sendToScreen def, shiftMask)]
+    ]
 
 
 ------------------------------------------------------------------------
@@ -298,12 +333,12 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- mySpacing = smartSpacing 10
 mySpacing :: l a -> ModifiedLayout Spacing l a
 -- mySpacing = spacingRaw True (Border (2*i) i 0 i) True (Border i i i 0) True
-mySpacing = spacingRaw False (Border halfS halfS halfS halfS) False (Border s s s s) True
+mySpacing = spacingRaw False (Border s_2 s_2 s_2 s_2) True (Border s s s s) True
     where
-        s = 4
-        halfS = s `div` 2
+        s = spacingStep
+        s_2 = s `div` 2
 
-myLayout = ifWider 1280 horizLayout vertLayout
+myLayout = ifWider 1440 horizLayout vertLayout
     where
     horizLayout = renamed [CutWordsLeft 1] $ hiddenWindows $
         tiled |||
@@ -311,6 +346,7 @@ myLayout = ifWider 1280 horizLayout vertLayout
         full |||
         threeCol |||
         bsp
+
     vertLayout  = renamed [CutWordsLeft 1] $ hiddenWindows $
         renamed [Replace "3Rw"] (reflectVert $ Mirror threeCol) |||
         mirrorTiled |||
@@ -375,11 +411,12 @@ myLayout = ifWider 1280 horizLayout vertLayout
 -- 'className' and 'resource' are used below.
 --
 myManageHook = composeAll [
-        className =? "MPlayer"        --> doFloat,
-        className =? "Trayer"         --> doIgnore,
-        className =? "Gimp"           --> doFloat,
-        resource  =? "desktop_window" --> doIgnore,
-        resource  =? "kdesktop"       --> doIgnore
+        className =? "MPlayer"              --> doFloat,
+        className =? "Trayer"               --> doIgnore,
+        className =? "Gimp"                 --> doFloat,
+        resource  =? "screenkey"            --> doFloat,
+        resource  =? "desktop_window"       --> doIgnore,
+        resource  =? "kdesktop"             --> doIgnore
     ]
 
 ------------------------------------------------------------------------
@@ -407,8 +444,14 @@ myLogHook dbus = def {
     -- ppLayout =  removePrefix "Spacing " . removePrefix "Hidden ",
     ppTitle =   const "",
     ppSep =     " : ",
-    ppSort =    getSortByXineramaRule
+    ppSort =    getSortByXineramaPhysicalRule verticalScreenOrderer -- Matches PhysicalScreens order
     -- ppExtras = [logWhenActive 1 $ logCmd "date +%s%N"]
+
+    -- ppRename = \n (W.Workspace wid _ _) -> wid ++ ":" ++ n
+    -- and [https://hackage.haskell.org/package/xmonad-contrib-0.18.1/docs/XMonad-Config-Prime.html#t:WindowSpace]
+
+    -- TODO: Store workspace name as "<n>:<name>" pair in a string, then hide the prefix with ppRename
+    -- also see: [https://www.reddit.com/r/xmonad/comments/gmve1b/how_to_autorename_workspace_names_in_xmonad_base
 }
 
 debugLogHook :: PP
@@ -426,6 +469,7 @@ dbusOutput dbus str = let
         signalBody = [D.toVariant $ UTF8.decodeString str]
     in D.emit dbus $ signal { D.signalBody = signalBody }
 
+-- Create dbus client for logging to polybar
 mkDbusClient :: IO D.Client
 mkDbusClient = do
     dbus <- D.connectSession
@@ -442,6 +486,7 @@ mkDbusClient = do
 
 myStartupHook = do
     spawnOnce "nitrogen --restore" -- Sets the wallpaper
+    spawnOnce "pulseaudio --start"
     spawnOnce myScreenLayout
     -- setWMName "xm1ad"
 
@@ -471,7 +516,7 @@ main = do
         modMask = mod4Mask,
         focusFollowsMouse = False,
         clickJustFocuses = True,
-        keys = myKeys,
+        keys = myKeyBindings,
         mouseBindings = myMouseBindings,
 
         -- Hooks
@@ -487,10 +532,5 @@ main = do
         -- myLogHook :: D.Client -> PP
         -- dbus :: D.Client
 
-        -- TODO: Rename workspaces
-        -- See [https://www.reddit.com/r/xmonad/comments/34w02a/interactive_workspace_rename_in_xmonad]
-        -- and [https://unix.stackexchange.com/questions/217213/getting-xmonad-to-show-name-of-current-workspace-in-xmobar]
-        -- logHook = dynamicLogWithPP $ myLogHook dbus
-        -- logHook = dynamicLogWithPP debugLogHook
-        logHook = workspaceNamesPP >> dynamicLogWithPP $ myLogHook dbus
+        logHook = dynamicLogWithPP $ myLogHook dbus
     }

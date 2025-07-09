@@ -101,9 +101,10 @@
     (pkgs.writeShellScriptBin "discord" ''firefox --new-window "https://discord.com/app"'')
     (pkgs.writeShellScriptBin "todoist" ''firefox --new-window "https://todoist.com/app"'')
     (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
-    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://platform.openai.com/playground/assistants"'')
+    (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://chatgpt.com"'')
     (pkgs.writeShellScriptBin "gmail" ''firefox --new-window "https://mail.google.com"'')
     (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/Rec1dite"'')
     (pkgs.writeShellScriptBin "clickup" ''firefox --new-window "https://clickup.up.ac.za"'')
+    (pkgs.writeShellScriptBin "ytmusic" ''firefox --new-window "https://music.youtube.com"'')
   ];
 }

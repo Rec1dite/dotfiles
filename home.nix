@@ -143,6 +143,12 @@ in
       };
     };
 
+    #===== LAZYGIT =====#
+    lazygit = {
+      enable = true;
+      settings = {};
+    };
+
     #===== DIRENV =====#
     direnv = {
       enable = true;
@@ -230,6 +236,7 @@ in
       config = {
         theme = "base16"; # $ bat --list-themes
       };
+      extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
     };
     # TODO: trayer, bat-extras, zellij
 
@@ -495,6 +502,9 @@ tail = true
         lsblk = "lsblk -o NAME,LABEL,FSTYPE,SIZE,FSUSED,MOUNTPOINTS,UUID";
         conf = "code /home/rec1dite/.dotfiles";
         clock = "tty-clock -scC 1";
+        man = "batman";
+        mk = "() { mkdir -p \"$1\" && cd \"$1\" }";
+        ports = "netstat -tulanp";
       };
 
       # Bashrc configs

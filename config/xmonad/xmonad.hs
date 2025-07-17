@@ -414,7 +414,7 @@ myManageHook = composeAll [
         className =? "MPlayer"              --> doFloat,
         className =? "Trayer"               --> doIgnore,
         className =? "Gimp"                 --> doFloat,
-        resource  =? "screenkey"            --> doFloat,
+        resource  =? "screenkey"            --> doIgnore,
         resource  =? "desktop_window"       --> doIgnore,
         resource  =? "kdesktop"             --> doIgnore
     ]

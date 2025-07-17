@@ -1,5 +1,5 @@
-#@# 0165e15d33017aa10c9ba5c1219678e3
-#@ 2fef8d1e1bf471dd319caa272e4f8e44
+#@# e6985acc83420892507ba248871d0a92
+
 { pkgs, upkgs, ... }: { environment.systemPackages = with pkgs; [ #@
   (import (fetchFromGitHub {                                      #@
     owner = "rec1dite"; repo = "annix"; rev = "master";           #@
@@ -138,10 +138,9 @@
   tcpdump
   neovim
   screenkey
-  #@+^
-
-  #-
+  postman
 
   #== New ==#
+  #@+^
 
 ]; } #@

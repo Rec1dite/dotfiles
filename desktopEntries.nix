@@ -103,8 +103,12 @@
     (pkgs.writeShellScriptBin "whatsapp" ''firefox --new-window "https://web.whatsapp.com"'')
     (pkgs.writeShellScriptBin "chatgpt" ''firefox --new-window "https://chatgpt.com"'')
     (pkgs.writeShellScriptBin "gmail" ''firefox --new-window "https://mail.google.com"'')
-    (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/Rec1dite"'')
+    (pkgs.writeShellScriptBin "github" ''firefox --new-window "https://github.com/rec1dite"'')
     (pkgs.writeShellScriptBin "clickup" ''firefox --new-window "https://clickup.up.ac.za"'')
     (pkgs.writeShellScriptBin "ytmusic" ''firefox --new-window "https://music.youtube.com"'')
+    (pkgs.writeShellScriptBin "polybar-timer" ''
+      #!/bin/sh
+      ~/.dotfiles/config/polybar/scripts/polybar-timer/timer.sh "$@"
+    '')
   ];
 }

@@ -473,8 +473,8 @@
     #   config = import ./n2x/configuration.nix { inherit pkgs; };
     # };
 
-    labpc = {
-      config = import ./devops/configuration.nix { inherit pkgs lib stdenv; };
-    };
+    # labpc = {
+    #   config = import ./devops/configuration.nix { inherit pkgs lib stdenv; };
+    # };
   };
 }

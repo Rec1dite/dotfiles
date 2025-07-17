@@ -45,6 +45,7 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                # backupFileExtension = "backup";
                 users.rec1dite = {
                   imports = [
                     ./home.nix

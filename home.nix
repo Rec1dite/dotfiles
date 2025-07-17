@@ -89,27 +89,21 @@ in
     git = {
       enable = true;
 
-      includes = [
-        {
-          condition = "gitdir:~/repos/";
-          contents = {
-            user.name  = "Rec1dite";
-            user.email = "rec1dite@gmail.com";
-
-            # Auto substitute to the correct SSH host
-            url."git@github-rec1dite:".insteadOf = ["git@github.com:" "https://github.com/"];
-          };
-        }
-
-        {
-          condition = "gitdir:~/grad/";
-          contents = {
-            user.name  = "digir";
-            user.email = "dino.gironi@bbd.co.za";
-
-            url."git@github-digir:".insteadOf = ["git@github.com:" "https://github.com/"];
-          };
-        }
+      includes = let
+        rec1diteContents = {
+          user.name  = "Rec1dite";
+          user.email = "rec1dite@gmail.com";
+          url."git@github-rec1dite:".insteadOf = ["git@github.com:" "https://github.com/"]; # Auto substitute to the correct SSH host
+        };
+        digirContents = {
+          user.name  = "digir";
+          user.email = "dino.gironi@bbd.co.za";
+          url."git@github-digir:".insteadOf = ["git@github.com:" "https://github.com/"];
+        };
+      in [
+        { condition = "gitdir:~/repos/";      contents = rec1diteContents; }
+        { condition = "gitdir:~/.dotfiles/";  contents = rec1diteContents; }
+        { condition = "gitdir:~/grad/";       contents = digirContents;    }
       ];
 
       extraConfig = {

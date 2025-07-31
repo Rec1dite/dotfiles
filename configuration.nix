@@ -40,6 +40,15 @@
   # };
   nix.settings.auto-optimise-store = true;
 
+  nix.settings.substituters = [
+    "https://nix-community.cachix.org"
+    "https://cache.nixos.org/"
+  ];
+  nix.settings.trusted-public-keys = [
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+  ];
+
   system.autoUpgrade = {
     enable = true;
     # flake = inputs.self.outPath;
@@ -280,6 +289,7 @@
     })
 
     (blender.override { cudaSupport = true; })
+    (btop.override { cudaSupport = true; })
 
     # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overrides]
     (tauon.overrideAttrs (final: prev: {
@@ -458,6 +468,14 @@
     initialPasswordFile = ./config/postgres/.pgadmin_pass;
     enable = true;
   };
+
+  services.mongodb = {
+    enable = true;
+    package = pkgs.mongodb-7_0; # See [https://wiki.nixos.org/wiki/MongoDB]
+    enableAuth = false;
+  };
+
+  # services.neo4j.enable = true;
 
   # Setup lightweight NixOS container
   # See [https://msucharski.eu/posts/application-isolation-nixos-containers]

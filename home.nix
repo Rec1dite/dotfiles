@@ -368,9 +368,7 @@ tail = true
       };
     };
 
-    dunst = {
-      enable = true;
-    };
+    dunst = { enable = true; };
   };
 
   #=============== DOTFILES ==============#
@@ -522,9 +520,7 @@ tail = true
       '';
     };
 
-    neovim = {
-      enable = true;
-    };
+    neovim = { enable = true; };
 
   };
 
@@ -542,13 +538,12 @@ tail = true
       firefox.enable = false;
       # chromium.enable = false;
 
-      # kde.enable = false; # Until [https://github.com/danth/stylix/issues/489] is fixed
+      # qt = { platform = "kvantum"; };
+      kde.enable = true; # Until [https://github.com/danth/stylix/issues/489] is fixed
     };
   };
 
-  xdg = {
-    enable = true;
-  };
+  xdg = { enable = true; };
 
   # See [https://youtu.be/m_6eqpKrtxk]
   gtk = {

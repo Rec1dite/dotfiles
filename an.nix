@@ -141,6 +141,8 @@
   postman
 
   #== New ==#
+  mongosh
+  mongodb-compass
   #@+^
 
 ]; } #@

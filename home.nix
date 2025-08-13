@@ -1,6 +1,6 @@
 # See docs [https://nix-community.github.io/home-manager/options.html]
 # See [https://youtu.be/IiyBeR-Guqw]
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, upkgs, ... }:
 
 let
   rofi-emoji = (pkgs.rofi-emoji.overrideAttrs (prev: {
@@ -57,7 +57,9 @@ in
       if [ "$CHOSENLAYOUT" ]; then
         /home/rec1dite/.screenlayout/$CHOSENLAYOUT
       fi
-    '') ];
+    '')
+    (pkgs.writeShellScriptBin "prompt" ''python3 ~/.dotfiles/scripts/prompt.py $@'')
+    ];
 
   programs = {
     #===== SSH =====#
@@ -81,6 +83,12 @@ in
         "bdclient.cs.up.ac.za" = {
           hostname = "bdclient.cs.up.ac.za";
           user = "techteam";
+        };
+
+        "susnet" = {
+          user = "ec2-user";
+          hostname = "susnet.co.za";
+          identityFile = "/home/rec1dite/grad/fediverse/the-key.pem";
         };
       };
     };
@@ -214,6 +222,9 @@ in
     vscode = {
       enable = true;
       extensions = [];
+
+      # packge = upkgs.vscode;
+
       # haskell = {
       #   enable = true;
       #   hie = {
@@ -233,6 +244,18 @@ in
       extraPackages = with pkgs.bat-extras; [ batdiff batman batgrep batwatch ];
     };
     # TODO: trayer, bat-extras, zellij
+
+
+    #===== VESKTOP =====#
+    # TODO
+    # vesktop = {
+    #   enable = true;
+    #   settings = {};
+    #   vencord.settings.enabledThemes = [ "catppuccin.css" ];
+    #   themes = {
+    #     catppuccin = "https://catppuccin.github.io/discord/dist/catppuccin-mocha.theme.css";
+    #   };
+    # };
 
     #===== YAZI =====#
     # See [https://yazi-rs.github.io/docs/installation/#nix]

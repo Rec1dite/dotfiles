@@ -1,6 +1,6 @@
 # See docs [https://nix-community.github.io/home-manager/options.html]
 # See [https://youtu.be/IiyBeR-Guqw]
-{ config, lib, pkgs, upkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 let
   rofi-emoji = (pkgs.rofi-emoji.overrideAttrs (prev: {
@@ -14,10 +14,10 @@ EOF
   }));
 
   # vscodeKeybindings = import ./config/vscode/keybindings.nix; # Removed in favor of Settings Sync
-  upkg = import <unstable> { overlays = [
-    # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overlays]
-    # (self: super: { hie-nix = import ~/src/hie-nix {}; })
-  ]; };
+  # upkg = import <unstable> { overlays = [
+  #   # See: [https://nixos.org/manual/nixpkgs/stable/#chap-overlays]
+  #   # (self: super: { hie-nix = import ~/src/hie-nix {}; })
+  # ]; };
 in
 {
   imports = [ ./desktopEntries.nix ];
@@ -83,6 +83,12 @@ in
         "bdclient.cs.up.ac.za" = {
           hostname = "bdclient.cs.up.ac.za";
           user = "techteam";
+        };
+
+        "pi" = {
+          user = "osmc";
+          hostname = "192.168.8.227";
+          identityFile = "/home/rec1dite/.ssh/pi";
         };
 
         "susnet" = {
@@ -221,7 +227,6 @@ in
     #===== VSCODE =====#
     vscode = {
       enable = true;
-      extensions = [];
 
       # packge = upkgs.vscode;
 
@@ -233,6 +238,11 @@ in
       #   };
       # };
       # keybindings = vscodeKeybindings; # Removed in favor of Settings Sync
+    };
+
+    #===== FIREFOX =====#
+    firefox = {
+      enable = true;
     };
 
     #===== BAT =====#
@@ -353,6 +363,12 @@ in
         max-preview = "${plugins}/max-preview.yazi";
       };
     };
+
+
+    #===== CLAUDE CODE =====#
+    # claude-code = {
+    #   enable = true;
+    # };
   };
 
   services = {
@@ -404,17 +420,24 @@ tail = true
     #   }
     # ) desktopEntries);
 
+    homeDir = config.home.homeDirectory;
+    mkOutOfStoreSymlink = config.lib.file.mkOutOfStoreSymlink;
+
     blenderVersion = lib.versions.majorMinor pkgs.blender.version;
   in
   {
     #----- Deploy config files -----#
+    # TODO: Migrate to xdg.configFile option instead: [https://home-manager-options.extranix.com/?query=xdg.configFile]
 
     # To enter the config content directly:
     # ".config/someProg/someProg.conf".text = ''
     #   EXAMPLE_CONF = "Your conf here"
     # '';
 
-    # Also see: `lib.file.mkOutOfStoreSymlink`
+    # VSCode
+    # See [https://github.com/nix-community/home-manager/issues/2085#issuecomment-861427318]
+    ".config/Code/User/settings.json".source = mkOutOfStoreSymlink "${homeDir}/.dotfiles/config/vscode/settings.json";
+    ".config/Code/User/keybindings.json".source = mkOutOfStoreSymlink "${homeDir}/.dotfiles/config/vscode/keybindings.json";
 
     # Kitty
     ".config/kitty/kitty.conf".source = ./config/kitty/kitty.conf;
@@ -503,6 +526,10 @@ tail = true
     EZA_COLORS = "ur=96:uw=96:ux=96:ue=96:gr=96:gw=96:gx=96:tr=96:tw=96:tx=96";
   };
 
+  home.sessionPath = [
+    "/home/rec1dite/.mnt/heap/.pnpm-bin"
+  ];
+
   programs = {
 
     # Configure bash
@@ -522,10 +549,10 @@ tail = true
         ports = "netstat -tulanp";
       };
 
-      # Bashrc configs
-      bashrcExtra = "
+      # .bashrc configs
+      bashrcExtra = ''
         xset r rate 250 50;
-      ";
+      '';
     };
 
     # Configure vim
@@ -548,10 +575,11 @@ tail = true
   };
 
   #=============== RICE ==============#
-  catppuccin = {
-    flavor = "mocha";
-    accent = "red";
-  };
+  # catppuccin = {
+  #   enable = false;
+  #   flavor = "mocha";
+  #   accent = "red";
+  # };
 
   stylix = {
     targets = {

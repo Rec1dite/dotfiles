@@ -1,0 +1,916 @@
+[
+  //===== NOTES =====//
+  // "when" clause: [https://code.visualstudio.com/api/references/when-clause-contexts]
+  // Language-specific hotkeys: [https://stackoverflow.com/a/69261971]
+
+  //===== EDITOR =====//
+  // Toggle block comment
+  {
+    "key": "ctrl+shift+a",
+    "command": "-editor.action.blockComment",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+/",
+    "command": "editor.action.blockComment",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  // Switch tabs
+  {
+    "key": "ctrl+tab",
+    "command": "workbench.action.nextEditor"
+  },
+  {
+    "key": "ctrl+pagedown",
+    "command": "-workbench.action.nextEditor"
+  },
+  {
+    "key": "ctrl+shift+tab",
+    "command": "workbench.action.previousEditor"
+  },
+  {
+    "key": "ctrl+pageup",
+    "command": "-workbench.action.previousEditor"
+  },
+  {
+    "key": "alt+.",
+    "command": "workbench.action.nextEditor",
+    "when": "!panelFocus"
+  },
+  {
+    "key": "alt+,",
+    "command": "workbench.action.previousEditor",
+    "when": "!panelFocus"
+  },
+  // Move editor tabs
+  {
+    "key": "alt+shift+,",
+    "command": "workbench.action.moveEditorLeftInGroup"
+  },
+  {
+    "key": "alt+shift+.",
+    "command": "workbench.action.moveEditorRightInGroup"
+  },
+  // Pin editor tabs
+  {
+    "key": "alt+p",
+    "command": "workbench.action.pinEditor",
+    "when": "!activeEditorIsPinned"
+  },
+  {
+    "key": "alt+p",
+    "command": "workbench.action.unpinEditor",
+    "when": "activeEditorIsPinned"
+  },
+  {
+    "key": "ctrl+alt+p",
+    "command": "workbench.action.toggleSeparatePinnedEditorTabs"
+  },
+  // Disable terminal capturing resize shortcuts
+  {
+    "key": "ctrl+alt+j",
+    "command": "ctrl+alt+j",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+alt+k",
+    "command": "ctrl+alt+k",
+    "when": "terminalFocus"
+  },
+  // Align by regex
+  {
+  "key": "shift+alt+a",
+  "command": "-align.by.regex",
+  "when": "editorHasSelection"
+  },
+  {
+  "key": "alt+a",
+  "command": "align.by.regex",
+  "when": "editorHasSelection"
+  },
+
+  //===== VIEWS & PANELS =====//
+  // Resize editor panels
+  {
+    "key": "ctrl+alt+j",
+    "command": "workbench.action.terminal.resizePaneDown"
+  },
+  {
+    "key": "ctrl+alt+k",
+    "command": "workbench.action.terminal.resizePaneUp"
+  },
+  // Resize current view
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.increaseViewSize"
+  },
+  {
+    "key": "ctrl+alt+h",
+    "command": "workbench.action.decreaseViewSize"
+  },
+
+  //===== QUICK SELECT =====//
+  // Navigate quick select
+  {
+    "key": "alt+j",
+    // "command": "workbench.action.quickOpenNavigateNext", //Open selection on alt released
+    "command": "workbench.action.quickOpenSelectNext",      //Open selection on enter pressed
+    "when": "inQuickOpen"
+  },
+  {
+    "key": "alt+k",
+    // "command": "workbench.action.quickOpenNavigatePrevious",
+    "command": "workbench.action.quickOpenSelectPrevious",
+    "when": "inQuickOpen"
+  },
+  // Go backwards in the quick open dialog if theres a back button
+  // (e.g. When selecting dev containers options)
+  {
+    "key": "alt+h",
+    "command": "workbench.action.quickInputBack",
+    "when": "inQuickOpen"
+  },
+
+  //===== LANGUAGE-SPECIFIC =====//
+  // SQLTools: Execute
+  {
+    "key": "ctrl+enter",
+    "command": "sqltools.executeCurrentQuery",
+    "when": "editorTextFocus && editorLangId == sql"
+  },
+  // Rest Client: Send request
+  {
+    "key": "ctrl+enter",
+    "command": "rest-client.request",
+    "when": "editorTextFocus && editorLangId == http"
+  },
+
+  //===== CODELENS =====//
+  // Show lens select
+  {
+    "key": "ctrl+shift+enter",
+    "command": "-editor.action.insertLineBefore",
+    "when": "editorTextFocus && !editorReadonly"
+  },
+  {
+    "key": "ctrl+shift+enter",
+    "command": "codelens.showLensesInCurrentLine"
+  },
+
+  //===== DIRTY DIFF =====//
+  // Open next diff in dirtydiff
+  {
+    "key": "shift+alt+n",
+    "command": "editor.action.dirtydiff.next",
+    "when": "editorTextFocus && !textCompareEditorActive"
+  },
+  // Open previous diff in dirtydiff
+  {
+    "key": "shift+alt+p",
+    "command": "editor.action.dirtydiff.previous",
+    "when": "editorTextFocus && !textCompareEditorActive"
+  },
+  // Close dirtydiff
+  {
+    "key": "ctrl+[",
+    "command": "closeQuickDiff",
+    "when": "dirtyDiffVisible"
+  },
+  // Revert selected ranges
+  {
+    "key": "shift+alt+u",
+    "command": "git.revertSelectedRanges",
+    "when": "editorTextFocus && !operationInProgress"
+  },
+  //===== MERGE CONFLICT MARKERS =====//
+  {
+    "key": "shift+alt+n",
+    "command": "merge-conflict.next",
+    "when": "!dirtyDiffVisible && hasConflicts"
+  },
+  {
+    "key": "shift+alt+p",
+    "command": "merge-conflict.previous",
+    "when": "!dirtyDiffVisible && hasConflicts"
+  },
+
+  //===== ACTIVITY BAR =====//
+  //Open Remote Containers side bar
+  {
+    "key": "ctrl+shift+alt+r",
+    "command": "targetsContainers.focus"
+  },
+  //Open Docker side bar
+  {
+    "key": "ctrl+alt+y",
+    "command": "workbench.action.nextSideBarView",
+    "when": "sideBarVisible"
+  },
+  {
+    "key": "ctrl+alt+e",
+    // "command": "workbench.action.quickOpenNavigatePrevious",
+    "command": "workbench.action.previousSideBarView",
+    "when": "sideBarVisible"
+  },
+
+  //===== FILE EXPLORER =====//
+  // Search tree explorer
+  // See [https://code.visualstudio.com/updates/v1_31#_new-tree-widget]
+  // and [https://code.visualstudio.com/updates/v1_89#_find-in-trees-keybinding]
+  // and [https://github.com/VSCodeVim/Vim/pull/3432]
+  {
+    "key": "/",
+    "command": "list.find",
+    "when": "listFocus && listSupportsFind && !inputFocus"
+  },
+  // Close tree explorer search
+  // {
+  //   "key": "enter",
+  //   "command": "list.closeFind",
+  //   "when": "listFocus && listSupportsFind && !inputFocus && treeFindOpen"
+  // },
+  // Add new file/folder
+  {
+    "key": "shift+o",
+    "command": "explorer.newFolder",
+    "when": "explorerViewletFocus && filesExplorerFocus && !inputFocus"
+  },
+  {
+    "key": "o",
+    "command": "explorer.newFile",
+    "when": "explorerViewletFocus && filesExplorerFocus && !inputFocus"
+  },
+  // Compare file diffs
+  {
+    "key": "c",
+    "command": "selectForCompare",
+    "when": "explorerViewletFocus && filesExplorerFocus && !inputFocus"
+  },
+  {
+    "key": "shift+c",
+    "command": "compareFiles",
+    "when": "explorerViewletFocus && filesExplorerFocus && resourceSelectedForCompare && !inputFocus"
+  },
+  // File manipulation
+  {
+    "key": "y",
+    "command": "filesExplorer.copy",
+    "when": "filesExplorerFocus && filesExplorerFocus && !inputFocus"
+  },
+  {
+    "key": "r",
+    "command": "renameFile",
+    "when": "filesExplorerFocus && filesExplorerFocus && !inputFocus"
+  },
+  {
+    "key": "x",
+    "command": "filesExplorer.cut",
+    "when": "filesExplorerFocus && filesExplorerFocus && !inputFocus"
+  },
+  {
+    "key": "p",
+    "command": "filesExplorer.paste",
+    "when": "filesExplorerFocus && filesExplorerFocus && !inputFocus"
+  },
+  // Scroll up/down
+  {
+    "key": "ctrl+e",
+    "command": "list.scrollDown",
+    "when": "listFocus && !inputFocus && !treestickyScrollFocused && listScrollAtBoundary != 'both' && listScrollAtBoundary != 'bottom'"
+  },
+  {
+    "key": "ctrl+y",
+    "command": "list.scrollUp",
+    "when": "listFocus && !inputFocus && !treestickyScrollFocused && listScrollAtBoundary != 'both' && listScrollAtBoundary != 'top'"
+  },
+
+  //===== INTELLISENSE =====//
+  // Scroll through intellisense
+  {
+    "key": "alt+j",
+    // "command": "workbench.action.quickOpenNavigateNext", //Open selection on alt released
+    "command": "selectNextSuggestion", //Open selection on enter pressed
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+  },
+  {
+    "key": "alt+k",
+    // "command": "workbench.action.quickOpenNavigatePrevious",
+    "command": "selectPrevSuggestion",
+    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
+  },
+  // Open/close suggestions
+  {
+    "key": "ctrl+space",
+    "command": "editor.action.triggerSuggest",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "ctrl+space",
+    "command": "hideSuggestWidget",
+    "when": "editorTextFocus && suggestWidgetVisible"
+  },
+  {
+    "key": "escape",
+    "command": "runCommands",
+    // "command": "hideSuggestWidget",
+    "when": "editorTextFocus && suggestWidgetVisible",
+    "args": {
+      "commands": ["hideSuggestWidget", "extension.vim_escape"]
+    }
+  },
+  // Open docs hover
+  {
+    "key": "ctrl+shift+space",
+    // "command": "editor.action.showDefinitionPreviewHover",
+    "command": "editor.action.showHover",
+    "when": "editorTextFocus"
+  },
+  // Close docs hover
+  // See [https://github.com/microsoft/vscode/pull/209331]
+  // Waiting on the above PR to be merged
+  // Best we can do for now is unfocus the hover
+  {
+    "key": "ctrl+shift+space",
+    "command": "workbench.action.focusActiveEditorGroup",
+    // "command": "extension.vim_escape", // Alternative
+    "when": "editorHoverFocused"
+  },
+  // Scroll docs hover
+  // See [https://github.com/VSCodeVim/Vim/issues/3740]
+  {
+    "key": "j",
+    "command": "editor.action.scrollDownHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "k",
+    "command": "editor.action.scrollUpHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "g",
+    "command": "editor.action.goToTopHover",
+    "when": "editorHoverFocused"
+  },
+  {
+    "key": "shift+g",
+    "command": "editor.action.goToBottomHover",
+    "when": "editorHoverFocused"
+  },
+  // Open definition
+  {
+    "key": "alt+space",
+    "command": "editor.action.revealDefinition",
+    "when": "editorTextFocus"
+  },
+  // Open definition in split window
+  {
+    "key": "alt+shift+space",
+    "command": "editor.action.revealDefinitionAside",
+    "when": "editorTextFocus"
+  },
+
+  //===== CODE ACTION MENU =====//
+  // See [https://github.com/microsoft/vscode/issues/55111#issuecomment-1237491199]
+  // Scrolling
+  {
+    "key": "alt+k",
+    "when": "codeActionMenuVisible",
+    "command": "selectPrevCodeAction"
+  },
+  {
+    "key": "alt+j",
+    "when": "codeActionMenuVisible",
+    "command": "selectNextCodeAction"
+  },
+
+  //===== DEBUGGING =====//
+  // Toggle debug variables view
+  {
+    "key": "ctrl+shift+d",
+    "command": "workbench.debug.action.focusVariablesView",
+    "when": "viewContainer.workbench.view.debug.enabled && !variablesFocused"
+  },
+  {
+    "key": "ctrl+shift+d",
+    "command": "-workbench.view.debug",
+    "when": "viewContainer.workbench.view.debug.enabled && variablesFocused"
+  },
+
+  //===== TERMINAL TABS =====//
+  // Toggle terminal focus
+  {
+    "key": "ctrl+shift+l",
+    "command": "workbench.action.terminal.focus",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+l",
+    // "command": "workbench.action.terminal.toggleTerminal", //Also hides the terminal when switching focus to the editor
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "terminalFocus"
+  },
+  // Switch terminal panels
+  {
+    "key": "alt+.",
+    "command": "workbench.action.nextPanelView",
+    "when": "panelFocus"
+  },
+  {
+    "key": "alt+,",
+    "command": "workbench.action.previousPanelView",
+    "when": "panelFocus"
+  },
+  // Reenable toggle terminal visibility
+  {
+    "key": "ctrl+j",
+    "command": "-extension.vim_ctrl+j",
+    "when": "editorTextFocus && vim.active && vim.use<C-j> && !inDebugRepl"
+  },
+  {
+    "key": "shift+alt+l",
+    // "command": "workbench.action.terminal.toggleTerminal", //Also hides the terminal when switching focus to the editor
+    "command": "workbench.action.terminal.split",
+    "when": "terminalFocus"
+  },
+  // Kill active terminal
+  {
+    "key": "ctrl+alt+d",
+    "command": "workbench.action.terminal.kill"
+  },
+  //Scroll through terminal tab groups
+  {
+    "key": "ctrl+shift+j",
+    "command": "workbench.action.terminal.focusNext"
+  },
+  {
+    "key": "ctrl+shift+k",
+    "command": "workbench.action.terminal.focusPrevious"
+  },
+  //Scroll within terminal group tabs
+  {
+    "key": "shift+alt+j",
+    "command": "workbench.action.terminal.focusNextPane",
+    // "when": "focusedView == 'terminal'"
+  },
+  {
+    "key": "shift+alt+k",
+    "command": "workbench.action.terminal.focusPreviousPane",
+    // "when": "focusedView == 'terminal'"
+  },
+  //Customize terminal icons
+  {
+    "key": "ctrl+alt+shift+j",
+    "command": "workbench.action.terminal.changeColor",
+    "when": "inQuickOpen"
+  },
+  {
+    "key": "ctrl+alt+shift+j",
+    "command": "workbench.action.terminal.changeIcon",
+    // "command": "workbench.action.acceptSelectedQuickOpenItem",
+    "when": "!inQuickOpen"
+  },
+  // {
+  // "key": "ctrl+alt+shift+j",
+  // "command": "extension.multiCommand.execute",
+  // "when": "inQuickOpen",
+  // "args": {
+  //     "sequence": [
+  //         {
+  //             "command": "workbench.action.terminal.changeIcon",
+  //             // "onDone": [
+  //             //     "workbench.action.terminal.changeColor"
+  //             // ]
+  //         }
+  //     ]
+  // }
+  // },
+  //Create new terminal and select profile
+  {
+    "key": "ctrl+alt+shift+k",
+    "command": "workbench.action.terminal.newWithProfile"
+    // "args": { "profileName": "bash" }
+  },
+  //Disable quick open in terminal
+  {
+    "key": "ctrl+e",
+    "command": "-workbench.action.quickOpen"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "workbench.action.quickOpen",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-workbench.action.quickOpen"
+  },
+  // Rebind focus find
+  {
+    "key": "ctrl+f",
+    "command": "-workbench.action.terminal.focusFind"
+  },
+  {
+    "key": "ctrl+alt+f",
+    "command": "workbench.action.terminal.focusFind",
+    "when": "!terminalFindFocused"
+  },
+  {
+    "key": "ctrl+alt+f",
+    "command": "workbench.action.terminal.hideFind",
+    "when": "terminalFindFocused"
+  },
+
+  //===== JUPYTER NOTEBOOK =====//
+  //Scroll through cells
+  {
+    "key": "alt+j",
+    "command": "notebook.focusNextEditor",
+    "when": "notebookEditorFocused && !suggestWidgetMultipleSuggestions && !suggestWidgetVisible && !codeActionMenuVisible"
+  },
+  {
+    "key": "alt+k",
+    "command": "notebook.focusPreviousEditor",
+    "when": "notebookEditorFocused && !suggestWidgetMultipleSuggestions && !suggestWidgetVisible && !codeActionMenuVisible"
+  },
+  //Delete current cell
+  {
+    "key": "alt+x",
+    "command": "notebook.cell.delete",
+    "when": "notebookEditorFocused"
+  },
+  //Add new cell
+  {
+    "key": "alt+o",
+    "command": "notebook.cell.insertCodeCellBelow",
+    "when": "notebookEditorFocused"
+  },
+  {
+    "key": "alt+shift+o",
+    "command": "notebook.cell.insertCodeCellAbove",
+    "when": "notebookEditorFocused"
+  },
+  //Page scroll up/down
+  {
+    "key": "ctrl+e",
+    "command": "extension.multiCommand.execute",
+    "when": "notebookEditorFocused",
+    "args": {
+      "sequence": [
+        {
+          "command": "list.scrollDown",
+          "repeat": 5
+        }
+      ]
+    }
+  },
+  {
+    "key": "ctrl+y",
+    "command": "extension.multiCommand.execute",
+    "when": "notebookEditorFocused",
+    "args": {
+      "sequence": [
+        {
+          "command": "list.scrollUp",
+          "repeat": 5
+        }
+      ]
+    }
+  },
+  {
+    "key": "alt+shift+g",
+    "command": "list.focusLast",
+    "when": "notebookEditorFocused"
+  },
+  {
+    "key": "alt+g alt+g",
+    "command": "list.focusFirst",
+    "when": "notebookEditorFocused"
+  },
+  //Move between tabs when no code cell is in focus
+  {
+    "key": "g shift+t",
+    "command": "workbench.action.previousEditorInGroup",
+    "when": "notebookEditorFocused && !notebookCellEditorFocused"
+  },
+  {
+    "key": "g t",
+    "command": "workbench.action.nextEditorInGroup",
+    "when": "notebookEditorFocused && !notebookCellEditorFocused"
+  },
+  //Position cell centered on the screen
+  {
+    "key": "z z",
+    "command": "notebook.centerActiveCell",
+    "when": "notebookEditorFocused && !notebookCellEditorFocused"
+  },
+  //Disable deletion of current code cell by VsVim
+  {
+    "key": "d d",
+    "command": "",
+    "when": "notebookEditorFocused && !notebookCellEditorFocused"
+  },
+
+  //===== NOTEBOOK INTERACTIVE MODE =====//
+  // Move between cells
+  {
+    "key": "alt+k",
+    "command": "jupyter.gotoPrevCellInFile",
+    "when": "!jupyter.webExtension && !inQuickOpen && !(suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus) && !codeActionMenuVisible"
+  },
+  {
+    "key": "alt+j",
+    "command": "jupyter.gotoNextCellInFile",
+    "when": "!jupyter.webExtension && !inQuickOpen && !(suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus) && !codeActionMenuVisible"
+  },
+  // Remove cell
+  {
+    "key": "alt+x",
+    "command": "jupyter.deleteCells",
+    "when": "!jupyter.webExtension && !inQuickOpen && !(suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus)"
+  },
+  // Add new cell
+  {
+    "key": "alt+o",
+    "command": "jupyter.addcellbelow",
+    "when": "!jupyter.webExtension && !inQuickOpen && !(suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus)"
+  },
+
+  //===== SIDE PANEL =====//
+  //Toggle panel position
+  {
+    "key": "ctrl+alt+shift+l",
+    "command": "workbench.action.positionPanelRight"
+  },
+  {
+    "key": "ctrl+alt+shift+l",
+    "command": "workbench.action.positionPanelBottom",
+    "when": "panelPosition == right"
+  },
+
+  //===== SEARCH =====//
+  {
+    "key": "enter",
+    "command": "search.action.focusSearchList",
+    "when": "searchViewletVisible && searchViewletFocus"
+  },
+
+  //===== WINDOW =====//
+  //Disable close window
+  {
+    "key": "ctrl+shift+w",
+    "command": "-workbench.action.closeWindow"
+  },
+
+  //===== NOTIFICATIONS =====//
+  {
+    "key": "ctrl+shift+w",
+    "command": "notifications.clearAll"
+  },
+  {
+    "key": "shift+alt+enter",
+    "command": "github.copilot.generate",
+    "when": "editorTextFocus && github.copilot.activated"
+  },
+  {
+    "key": "ctrl+enter",
+    "command": "-github.copilot.generate",
+    "when": "editorTextFocus && github.copilot.activated"
+  },
+  {
+    "key": "ctrl+shift+alt+g",
+    "command": "workbench.view.extension.copilot-labs"
+  },
+  {
+    "key": "ctrl+tab",
+    "command": "-workbench.action.quickOpenPreviousRecentlyUsedEditorInGroup",
+    "when": "!activeEditorGroupEmpty"
+  },
+  {
+    "key": "ctrl+shift+tab",
+    "command": "-workbench.action.quickOpenLeastRecentlyUsedEditorInGroup",
+    "when": "!activeEditorGroupEmpty"
+  },
+
+  //===== BREADCRUMBS =====//
+  {
+    "key": "ctrl+shift+;",
+    "command": "breadcrumbs.focusAndSelect",
+    "when": "editorFocus"
+  },
+  {
+    "key": "ctrl+shift+;",
+    // Focus the editor
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "!editorFocus"
+  },
+  {
+    "key": "shift+j",
+    "command": "breadcrumbs.focusPrevious",
+    "when": "breadcrumbsActive && breadcrumbsVisible"
+  },
+  {
+    "key": "shift+k",
+    "command": "breadcrumbs.focusNext",
+    "when": "breadcrumbsActive && breadcrumbsVisible"
+  },
+  {
+    "key": "ctrl+p",
+    "command": "-extension.vim_ctrl+p",
+    "when": "editorTextFocus && vim.active && vim.use<C-p> && !inDebugRepl || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'CommandlineInProgress' || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'SearchInProgressMode'"
+  },
+  {
+    "key": "enter",
+    "command": "-tinymist.onEnter",
+    "when": "editorTextFocus && !editorHasMultipleSelections && !editorReadonly && !suggestWidgetVisible && editorLangId == 'typst' && vim.mode != 'CommandlineInProgress' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'EasyMotionMode' && vim.mode != 'Normal' && vim.mode != 'Replace' && vim.mode != 'SearchInProgressMode' && vim.mode != 'SurroundInputMode' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine'"
+  },
+  {
+    "key": "ctrl+shift+alt+d",
+    "command": "workbench.view.extension.sqltoolsActivityBarContainer"
+  },
+
+  //===== TAB GROUPS =====//
+  {
+    "key": "ctrl+alt+i",
+    "command": "workbench.view.extension.amazonq",
+    "when": "viewContainer.workbench.view.extension.amazonq.enabled && focusedView != amazonq"
+  },
+  {
+    "key": "ctrl+alt+i",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "focusedView == amazonq"
+  },
+  // Focus Tabstronaut
+  {
+    "key": "ctrl+shift+alt+e",
+    "command": "tabstronaut.focus",
+    "when": "focusedView != tabstronaut"
+  },
+  {
+    "key": "ctrl+shift+alt+e",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "focusedView == tabstronaut"
+  },
+  // Create new folder
+  {
+    "key": "shift+o",
+    "command": "tabstronaut.openTabGroupContextMenu",
+    "when": "focusedView == tabstronaut"
+  },
+  // Close tab
+  {
+    "key": "x",
+    "command": "tabstronaut.showMoreOptions",
+    "when": "focusedView == tabstronaut"
+  },
+
+  //===== PINNED FOLDERS =====//
+  // Focus pinned folders
+  {
+    "key": "ctrl+shift+alt+p",
+    "command": "pinned-folders.focus",
+    "when": "focusedView != pinned-folders"
+  },
+  {
+    "key": "ctrl+shift+alt+p",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "focusedView == pinned-folders"
+  },
+  {
+    "key": "o",
+    "command": "pinned-folders.addEntry",
+    "when": "focusedView == pinned-folders"
+  },
+  {
+    "key": "x",
+    "command": "pinned-folders.removeEntry",
+    "when": "focusedView == pinned-folders"
+  },
+
+  //===== TERMINAL SCROLLING =====//
+  // Scroll terminal lines
+  {
+    "key": "alt+j",
+    "command": "workbench.action.terminal.scrollDown",
+    "when": "!terminalSuggestWidgetVisible && terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive"
+  },
+  {
+    "key": "ctrl+alt+pagedown",
+    "command": "-workbench.action.terminal.scrollDown",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive"
+  },
+  {
+    "key": "alt+k",
+    "command": "workbench.action.terminal.scrollUp",
+    "when": "!terminalSuggestWidgetVisible && terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive"
+  },
+  {
+    "key": "ctrl+alt+pageup",
+    "command": "-workbench.action.terminal.scrollUp",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive"
+  },
+  // Scroll terminal commands
+  {
+    "key": "alt+p",
+    "command": "workbench.action.terminal.scrollToPreviousCommand",
+    "when": "terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled"
+  },
+  {
+    "key": "ctrl+up",
+    "command": "-workbench.action.terminal.scrollToPreviousCommand",
+    "when": "terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled"
+  },
+  {
+    "key": "alt+n",
+    "command": "workbench.action.terminal.scrollToNextCommand",
+    "when": "terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled"
+  },
+  {
+    "key": "ctrl+down",
+    "command": "-workbench.action.terminal.scrollToNextCommand",
+    "when": "terminalFocus && terminalHasBeenCreated && !accessibilityModeEnabled || terminalFocus && terminalProcessSupported && !accessibilityModeEnabled"
+  },
+  // Scroll terminal top/bottom
+  {
+    "key": "alt+g",
+    "command": "workbench.action.terminal.scrollToTop",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive || terminalFocusInAny && terminalProcessSupported && !terminalAltBufferActive"
+  },
+  {
+    "key": "ctrl+home",
+    "command": "-workbench.action.terminal.scrollToTop",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive || terminalFocusInAny && terminalProcessSupported && !terminalAltBufferActive"
+  },
+  {
+    "key": "alt+shift+g",
+    "command": "workbench.action.terminal.scrollToBottom",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive || terminalFocusInAny && terminalProcessSupported && !terminalAltBufferActive"
+  },
+  {
+    "key": "ctrl+end",
+    "command": "-workbench.action.terminal.scrollToBottom",
+    "when": "terminalFocusInAny && terminalHasBeenCreated && !terminalAltBufferActive || terminalFocusInAny && terminalProcessSupported && !terminalAltBufferActive"
+  },
+
+
+  //===== TERMINAL SUGGEST =====//
+  {
+    "key": "alt+k",
+    "command": "workbench.action.terminal.selectPrevSuggestion",
+    "when": "terminalFocus && terminalSuggestWidgetVisible"
+  },
+  {
+    "key": "alt+j",
+    "command": "workbench.action.terminal.selectNextSuggestion",
+    "when": "terminalFocus && terminalSuggestWidgetVisible"
+  },
+
+
+  //===== MISC =====//
+  {
+    "key": "alt+,",
+    "command": "-gitlens.key.alt+,",
+    "when": "gitlens:key:,"
+  },
+  {
+    "key": "alt+.",
+    "command": "-gitlens.key.alt+.",
+    "when": "gitlens:key:."
+  },
+  {
+    "key": "alt+,",
+    "command": "-gitlens.diffWithPrevious",
+    "when": "editorTextFocus && config.gitlens.keymap == 'alternate' && resource in 'gitlens:tabs:tracked'"
+  },
+
+  {
+    "key": "alt+.",
+    "command": "-gitlens.diffWithNext",
+    "when": "editorTextFocus && gitlens:enabled && config.gitlens.keymap == 'alternate' && resourceScheme =~ /^(gitlens|git|pr)$/"
+  },
+  {
+    "key": "f3",
+    "command": "-editor.action.nextMatchFindAction",
+    "when": "editorFocus"
+  },
+  {
+    "key": "ctrl+b",
+    "command": "-markdown.extension.editing.toggleBold",
+    "when": "editorTextFocus && !editorReadonly && editorLangId =~ /^markdown$|^rmd$|^quarto$/"
+  },
+  {
+    "key": "escape",
+    "command": "-geminicodeassist.rejectCompletion",
+    "when": "authLoggedIn && config.geminicodeassist.enable && inlineSuggestionVisible"
+  },
+  {
+    "key": "escape",
+    "command": "-aws.amazonq.inline.rejectEdit",
+    "when": "aws.amazonq.editSuggestionActive && aws.codewhisperer.connected && editorTextFocus"
+  },
+  {
+    "key": "escape",
+    "command": "-aws.amazonq.rejectCodeSuggestion",
+    "when": "aws.codewhisperer.connected && inlineSuggestionVisible && !editorReadonly"
+  },
+]

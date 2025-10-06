@@ -2,23 +2,39 @@
   description = "N1x system config flake";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-24.11"; # === "github:NixOS/nixpkgs/nixos-24.11"
+    nixpkgs.url = "nixpkgs/nixos-25.05"; # === "github:NixOS/nixpkgs/nixos-24.11"
     unstable.url = "nixpkgs/nixos-unstable";
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs"; # Ensure nixpkgs versions match for the above
     };
+    # home-manager-unstable = {
+    #   url = "github:nix-community/home-manager";
+    #   inputs.nixpkgs.follows = "unstable";
+    # };
     flake-utils.url = "github:numtide/flake-utils";
     poetry2nix.url = "github:nix-community/poetry2nix";
 
     stylix = {
-      url = "github:danth/stylix/release-24.11";
+      url = "github:danth/stylix/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     catppuccin.url = "github:catppuccin/nix";
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
   };
 
-  outputs = inputs@{ self, nixpkgs, unstable, home-manager, flake-utils, stylix, catppuccin, poetry2nix, ... }:
+  outputs = inputs@{
+    self,
+    nixpkgs,
+    unstable,
+    home-manager,
+    flake-utils,
+    stylix,
+    catppuccin,
+    poetry2nix,
+    nixos-hardware,
+    ...
+  }:
     # flake-utils.lib.eachDefaultSystem (system:
       let
         system = "x86_64-linux";
@@ -37,7 +53,7 @@
         nixosConfigurations.n1x = nixpkgs.lib.nixosSystem {
           inherit system;
           # See [https://nixos-and-flakes.thiscute.world/nixos-with-flakes/nixos-flake-and-module-system#pass-non-default-parameters-to-submodules]
-          specialArgs = { inherit upkgs home-manager mkPoetryApplication; };
+          specialArgs = { inherit inputs nixpkgs upkgs home-manager mkPoetryApplication; };
           modules = [
             ./configuration.nix
 
@@ -45,21 +61,25 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                # backupFileExtension = "backup";
+                backupFileExtension = "backup";
+
                 users.rec1dite = {
                   imports = [
                     ./home.nix
-                    catppuccin.homeModules.catppuccin
+                    # catppuccin.homeModules.catppuccin
                   ];
                 };
+                # extraSpecialArgs = { inherit home-manager-unstable; };
                 # extraSpecialArgs = { inherit pkgs; };
               };
             }
 
-            stylix.nixosModules.stylix ./configuration.nix
+            stylix.nixosModules.stylix
             # { _module.args = { inherit inputs; }; }
 
-            catppuccin.nixosModules.catppuccin
+            # catppuccin.nixosModules.catppuccin
+
+            nixos-hardware.nixosModules.asus-rog-strix-g733qs
           ];
         };
 

@@ -2,7 +2,7 @@
 # See [configuration.nix(5)]
 # See [$ nixos-help]
 
-{ config, lib, stdenv, pkgs, upkgs, home-manager, mkPoetryApplication, ... }@inputs:
+{ inputs, config, lib, stdenv, pkgs, upkgs, home-manager, mkPoetryApplication, ... }@inps:
 
 {
   imports =
@@ -22,7 +22,7 @@
   boot.supportedFilesystems = [ "ntfs" ];
 
 
-  #=============== NIX ==============#
+#=============== NIX ==============#
   # Enable experimental features
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.settings.trusted-users = [ "root" "rec1dite" ];
@@ -31,6 +31,10 @@
   nixpkgs.config.allowUnfree = true;
 
   system.stateVersion = "24.05"; # LEAVE AS-IS, NEVER CHANGE
+
+  # Ensure <nixpkgs> aligns with the system's nixpkgs version
+  # (Recommended for flakes & nixd)
+  nix.nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
 
   # Automatic garbage collection + optimisation
   # nix.gc = {
@@ -51,7 +55,7 @@
 
   system.autoUpgrade = {
     enable = true;
-    # flake = inputs.self.outPath;
+    # flake = inps.self.outPath;
     # flags = [
     #   "--update-input"
     #   "nixpkgs"
@@ -62,17 +66,29 @@
   };
 
   #=============== SYSTEM ==============#
+  # See [https://youtu.be/pmuubmFcKtg]
+
   # Enable upower
   services.upower.enable = true;
   systemd.services.upower.enable = true;
 
+  # Better scheduling for CPU cycles
+  services.system76-scheduler.settings.cfsProfiles.enable = true;
+
   services.tlp = {
     enable = true;
     settings = {
+      CPU_BOOST_ON_AC = 1;
+      CPU_BOOST_ON_BAT = 0;
+      CPU_SCALING_GOVERNOR_ON_AC = "performance";
+      CPU_SCALING_GOVERNOR_ON_BAT = "powersave";
+
       # SATA_LINKPWR_ON_BAT = "med_power_with_dipm";
       # USB_BLACKLIST_PHONE = 1;
     };
   };
+
+  powerManagement.powertop.enable = true;
 
   #=============== NETWORKING ==============#
   # See [https://nixos.wiki/wiki/Networking]
@@ -143,7 +159,7 @@
 
 
   #=============== AUDIO + BLUETOOTH ==============#
-  hardware.pulseaudio = {
+  services.pulseaudio = {
     enable = false;
     support32Bit = true; # Enable compatibility with 32-bit apps
     extraConfig = ''
@@ -180,7 +196,9 @@
   #=============== FONTS ==============#
   # Install fonts
   fonts.packages = with pkgs; [
-    (nerdfonts.override { fonts = [ "FiraCode" "Hack" ]; })
+    nerd-fonts.fira-code
+    nerd-fonts.hack
+
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-emoji
@@ -195,6 +213,7 @@
   #=============== GPU ==============#
   # See [https://nixos.wiki/wiki/Nvidia#Modifying_NixOS_Configuration]
   # Enable OpenGL
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
@@ -221,8 +240,10 @@
     package = config.boot.kernelPackages.nvidiaPackages.stable;
 
     prime = {
-      amdgpuBusId = "PCI:6:0:0";
-      nvidiaBusId = "PCI:1:0:0";
+      # NOTE: Conflicting with nixos-hardware
+      #       Potentially use lib.mkForce if necessary
+      amdgpuBusId = lib.mkForce "PCI:6:0:0";
+      nvidiaBusId = lib.mkForce "PCI:1:0:0";
 
       #===== GPU MODES =====#
       # > ONLY ONE OF THESE MAY BE ENABLED AT A TIME!!
@@ -305,9 +326,9 @@
         root = ./config/tauon;
         fileset = ./config/tauon/Cr1m.ttheme;
       };
-      installPhase = ''
-        ${prev.installPhase}
-        cp $themeSrc/Cr1m.ttheme $out/share/tauon/theme
+      postInstall = ''
+        ${prev.postInstall}
+        cp $themeSrc/Cr1m.ttheme $out/lib/python*/site-packages/tauon/theme
         '';
     }))
 
@@ -320,7 +341,7 @@
       let
         base = pkgs.appimageTools.defaultFhsEnvArgs;
       in
-        pkgs.buildFHSUserEnv (base // {
+        pkgs.buildFHSEnv (base // {
         name = "fhs";
         targetPkgs = pkgs: (
           (base.targetPkgs pkgs) ++ (with pkgs; [
@@ -392,7 +413,7 @@
   # and [https://discourse.nixos.org/t/catppuccin-kvantum-not-working/43727/14]
   qt = {
     enable = true;
-    platformTheme = "gnome";
+    platformTheme = lib.mkForce "gnome";
     style = "adwaita";
 
     # platformTheme = "qt5ct";
@@ -430,7 +451,6 @@
   services.locate = {
     enable = true;
     package = pkgs.mlocate;
-    localuser = null;
   };
 
   programs.slock = {

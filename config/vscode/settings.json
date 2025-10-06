@@ -1,0 +1,379 @@
+{
+  "workbench.activityBar.location": "top",
+  "workbench.panel.defaultLocation": "right",
+
+  "update.mode": "manual",
+  "settingsSync.ignoredExtensions": ["plastic-scm.plastic-scm", "mkhl.direnv"],
+  "workbench.layoutControl.enabled": false,
+
+  //========== Editor ==========//
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook",
+    "*.txt": "default",
+    "*.pdf": "latex-workshop-pdf-hook",
+    "git-rebase-todo": "gitlens.rebase"
+  },
+
+  "files.associations": {
+    "*.js": "javascript",
+    ".greeble": "coffeescript",
+    "*.y": "yacc"
+  },
+
+  // "workbench.list.keyboardNavigation": "highlight", // Old
+  // "workbench.list.typeNavigationMode": "trigger", // Overridden by VsVim regardless
+  "workbench.list.defaultFindMode": "highlight",
+
+  "editor.accessibilitySupport": "off",
+  "editor.bracketPairColorization.enabled": false,
+  "editor.cursorSmoothCaretAnimation": "off",
+  "editor.cursorSurroundingLines": 5,
+  "editor.fontFamily": "Fira Code, Hack Nerd Font, Consolas, 'Courier New', monospace",
+  "editor.fontLigatures": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.lineNumbers": "relative",
+  "editor.minimap.showSlider": "always",
+  "editor.renderWhitespace": "none",
+  "editor.suggestSelection": "first",
+  "workbench.editor.empty.hint": "hidden",
+
+  "diffEditor.ignoreTrimWhitespace": true,
+  "hexeditor.columnWidth": 16,
+  "hexeditor.showDecodedText": true,
+
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+
+  "security.workspace.trust.untrustedFiles": "open",
+  "vsicons.dontShowNewVersionMessage": true,
+  "notebook.cellToolbarLocation": {
+    "default": "right",
+    "jupyter-notebook": "right"
+  },
+  //========== MCP ==========//
+  "mcp": {
+    "servers": {
+      // "mcp-server-time": {
+      //   "command": "python",
+      //   "args": [
+      //     "-m",
+      //     "mcp_server_time",
+      //     "--local-timezone=America/Los_Angeles"
+      //   ],
+      //   "env": {}
+      // },
+    },
+    "inputs": []
+  },
+
+  //========== Terminal ==========//
+  "terminal.integrated.scrollback": 30000,
+  "terminal.integrated.fontLigatures.enabled": true,
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "both",
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.suggest.inlineSuggestion": "alwaysOnTop",
+  "terminal.integrated.suggest.showStatusBar": true,
+  "terminal.integrated.enableImages": true,
+  "terminal.integrated.splitCwd": "workspaceRoot",
+  "terminal.integrated.tabs.enableAnimation": false,
+
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.increaseViewSize",
+    "workbench.action.decreaseViewSize"
+  ],
+  "terminal.integrated.profiles.windows": {
+    "EDW": {
+      "icon": "cloud",
+      "path": "C:\\sars\\tools\\3rdparty\\putty\\plink.exe",
+      "args": ["-ssh", "-load", "EDW_Direct", "-pw", "edw007"]
+    },
+    "Preprod": {
+      "icon": "cloud",
+      "path": "C:\\sars\\tools\\3rdparty\\putty\\plink.exe",
+      "args": ["-ssh", "-load", "Pre-Prod", "-pw", "sars"]
+    }
+  },
+
+  //========== Vim ==========//
+  "vim.handleKeys": { "<C-b>": false },
+  "vim.foldfix": true,
+  "vim.easymotion": true,
+  "vim.highlightedyank.enable": true,
+  "vim.showMarksInGutter": true,
+  "vim.sneak": true,
+  "vim.camelCaseMotion.enable": true,
+  "vim.easymotionDimBackground": false,
+  "vim.neovimPath": "/etc/profiles/per-user/rec1dite/bin/nvim",
+  "catppuccin.accentColor": "red",
+  "catppuccin.colorOverrides": {
+    "mocha": {
+      "red": "#f43e5c",
+      "yellow": "#fac291"
+    }
+  },
+  "workbench.iconTheme": "catppuccin-mocha",
+  "glassit.alpha": 255,
+
+  //========== Languages ==========//
+  // Blender
+  "blender.executables": [
+    {
+      "path": "c:\\Program Files\\Blender Foundation\\Blender 2.93\\blender.exe",
+      "name": "",
+      "isDebug": false
+    }
+  ],
+  "blender.scripts.directories": [
+    {
+      "path": "c:\\Users\\Rec1dite\\Desktop\\blender_scripts",
+      "name": ""
+    }
+  ],
+
+  // Python
+  // "python.analysis.extraPaths": [ "c:\\Program Files\\Blender Foundation\\pypredef" ],
+  "python.analysis.typeCheckingMode": "standard",
+  "python.autoComplete.extraPaths": [
+    "c:\\Program Files\\Blender Foundation\\pypredef"
+  ],
+  "python.condaPath": "$HOME/.anaconda3/bin/conda",
+
+  // Java
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "c:\\robocode\\libs\\robocode.jar"
+  ],
+  "java.configuration.runtimes": [
+    {
+      "name": "JavaSE-17",
+      "path": "C:\\Program Files\\Java\\jdk-23",
+      "default": true
+    }
+  ],
+
+  // HTML
+  "html.autoClosingTags": false,
+
+  // Nodejs
+  "npm.keybindingsChangedWarningShown": true,
+  "php.validate.executablePath": "C:\\xampp\\php\\php.exe",
+  "omnisharp.useModernNet": false,
+
+  // Svelte
+  "svelte.enable-ts-plugin": true,
+
+  // Haskell
+  "haskell.manageHLS": "GHCup",
+  "haskell.ghcupExecutablePath": "${HOME}/.ghcup/bin/ghcup",
+  // "haskell.serverEnvironment": { "PATH": "${HOME}/.ghcup/bin:$PATH" },
+
+  // Nix
+  // See [https://github.com/nix-community/nixd/blob/main/nixd/docs/configuration.md]
+  // and [https://youtu.be/M_zMoHlbZBY]
+  "nix.serverPath": "nixd",
+  "nix.enableLanguageServer": true,
+  "nix.serverSettings": {
+    "nixd": {
+      "nixpkgs": { "expr": "import <nixpkgs> {}" },
+      "options": {}
+      // "formatting": {},
+    }
+  },
+
+  // Markdown
+  "markdown-preview-enhanced.previewTheme": "none.css",
+
+  //========== Git ==========//
+  "scm.defaultViewMode": "tree",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false,
+    "yaml": true
+  },
+  "git.blame.editorDecoration.enabled": true,
+  "git.blame.statusBarItem.enabled": false,
+  "git.mergeEditor": true,
+  "git.openRepositoryInParentFolders": "never",
+  "github.copilot.editor.enableAutoCompletions": true,
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "github.copilot.selectedCompletionModel": "gemini-2.5-flash",
+  "githubPullRequests.pullBranch": "never",
+  "gitlens.ai.experimental.model": "gemini:gemini-1.5-flash-latest",
+  "gitlens.plusFeatures.enabled": false,
+
+  //========== Misc ==========//
+  "redhat.telemetry.enabled": false,
+  "hediet.vscode-drawio.codeLinkActivated": false,
+
+  "codesnap.backgroundColor": "#181825",
+  "codesnap.shutterAction": "copy",
+
+  "rest-client.previewResponseInUntitledDocument": true,
+  "rest-client.previewResponsePanelTakeFocus": false,
+  "rest-client.enableSendRequestCodeLens": false,
+  "rest-client.enableTelemetry": false,
+  "rest-client.decodeEscapedUnicodeCharacters": true,
+
+  "direnv.watchForChanges": false,
+
+  //========== Formatters ==========//
+  "[html]":            { "editor.defaultFormatter": "vscode.html-language-features" },
+  "[javascript]":      { "editor.defaultFormatter": "vscode.typescript-language-features" },
+  "[javascriptreact]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]":            { "editor.defaultFormatter": "vscode.json-language-features" },
+  "[jsonc]":           { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]":        { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[postcss]":         { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[python]":          { "editor.formatOnType": true },
+  "[svelte]":          { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]":      { "editor.defaultFormatter": "vscode.typescript-language-features" },
+  "[typst-code]":      { "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?" },
+  "[typst]":           { "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?" },
+  "[xml]":             { "editor.defaultFormatter": "DotJoshJohnson.xml" },
+
+  "makefile.configureOnOpen": true,
+  "notebook.output.scrolling": true,
+  "notebook.output.textLineLimit": 50,
+  "notebook.lineNumbers": "on",
+  "notebook.confirmDeleteRunningCell": false,
+  "latex-workshop.formatting.latex": "latexindent",
+  "security.allowedUNCHosts": ["wsl.localhost"],
+  "cmake.showOptionsMovedNotification": false,
+  "cmake.pinnedCommands": [
+    "workbench.action.tasks.configureTaskRunner",
+    "workbench.action.tasks.runTask"
+  ],
+  "workbench.list.mouseWheelScrollSensitivity": 2,
+  "workbench.list.fastScrollSensitivity": 4,
+  "editor.mouseWheelScrollSensitivity": 2,
+  "editor.fastScrollSensitivity": 4,
+  "python.analysis.autoImportCompletions": true,
+  "window.customMenuBarAltFocus": false,
+  "editor.unicodeHighlight.invisibleCharacters": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "database-client.autoSync": true,
+  "mssql.enableRichExperiences": true,
+
+  "sqltools.useNodeRuntime": true,
+  "sqltools.connectionExplorer.groupConnected": true,
+  "sqltools.queryParams.enableReplace": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "Db2 Driver for SQLTools",
+      "name": "SMPDW",
+      "group": "Sars_EDW",
+      "server": "10.30.2.112",
+      "port": 50003,
+      "database": "SMPD",
+      "username": "bbduser",
+      "password": "edw007"
+    },
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "askForPassword": true,
+      "driver": "PostgreSQL",
+      "name": "GarlicPhone",
+      "database": "garlic-phone",
+      "username": "postgres"
+    }
+  ],
+  "sqltools.results.showConsoleOnError": false,
+  "sqltools.results.location": "current",
+  "settingsSync.keybindingsPerPlatform": false,
+  "workbench.panel.showLabels": false,
+  "workbench.editor.editorActionsLocation": "hidden",
+  "vim.enableNeovim": true,
+  "workbench.colorTheme": "Catppuccin Mocha",
+  "totalTypeScript.hiddenTips": [
+    "passing-generics-to-types",
+    "basic-types",
+    "conditional-type",
+    "type-alias-declaration",
+    "type-alias-with-generics",
+    "type-alias-with-multiple-generics",
+    "mapped-type",
+    "keyof",
+    "typing-function-parameters",
+    "tuple-type",
+    "infer",
+    "parameters-utility-type",
+    "literal-type",
+    "union-type",
+    "generic-slots-in-functions",
+    "any-type",
+    "ts-object-type",
+    "typeof",
+    "function-return-type",
+    "never-keyword",
+    "as-const",
+    "variable-type-annotation",
+    "as-const-on-object",
+    "returntype-utility-type",
+    "pick-utility-type",
+    "exclude-utility-type",
+    "array-type",
+    "nested-conditional-type",
+    "type-predicate",
+    "record-utility-type",
+    "as-assertion",
+    "in-operator-narrowing",
+    "partial-utility-type",
+    "awaited-utility-type",
+    "extract-utility-type"
+  ],
+  "totalTypeScript.hideAllTips": false,
+  "totalTypeScript.hideBasicTips": true,
+  "window.commandCenter": false,
+  "window.titleBarStyle": "custom",
+  "window.menuBarVisibility": "hidden",
+
+  "markdown-preview-enhanced.liveUpdate": true,
+  "markdown-preview-enhanced.codeBlockTheme": "auto.css",
+  "markdown-preview-enhanced.revealjsTheme": "none.css",
+  "thunder-client.previewFeatures": true,
+  "vscode-markdown-github.theme.mode": "auto",
+  "vscode-markdown-github.theme.dark": "dark_colorblind",
+  "[css]": {
+    "editor.defaultFormatter": "stylelint.vscode-stylelint"
+  },
+  "promptGenerator.settings": {
+    "templates": [
+      {
+        "name": "Code review",
+        "template": "Given the below code. Help me review the code. For now and the rest of this session, make sure you output professional-grade, production-ready code that is clean, optimized, maintainable and follow best practices. Only print out the changed parts and where they are, never print out full file contents unless it's a new file. Never print out unchanged files.\n\n\n{content}"
+      }
+    ],
+    "additionalIgnoreRules": [
+      ".git"
+    ]
+  },
+  "chat.commandCenter.enabled": false,
+  "amazonQ.telemetry": false,
+  "amazonQ.suppressPrompts": {
+    "amazonQChatDisclaimer": true,
+    "amazonQChatPairProgramming": true
+  },
+  "amazonQ.workspaceIndex": true,
+  "amazonQ.workspaceIndexUseGPU": true,
+  "editor.stickyScroll.enabled": false,
+  "explorer.confirmDragAndDrop": false,
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true,
+    "/tmp/postman-collections-post-response.instructions.md": true,
+    "/tmp/postman-collections-pre-request.instructions.md": true,
+    "/tmp/postman-folder-post-response.instructions.md": true,
+    "/tmp/postman-folder-pre-request.instructions.md": true,
+    "/tmp/postman-http-request-post-response.instructions.md": true,
+    "/tmp/postman-http-request-pre-request.instructions.md": true
+  },
+  "mdb.mcp.server": "enabled",
+  "workbench.editor.pinnedTabsOnSeparateRow": true,
+  "terminal.integrated.stickyScroll.enabled": false
+
+  //========== Unsorted ==========//
+}

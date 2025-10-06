@@ -26,7 +26,7 @@
   htop-vim
   kitty
   tty-clock
-  lshw #@
+  lshw
 
   mpv
   mtr
@@ -59,6 +59,7 @@
   nil
   nixpkgs-fmt
   nix-init # Easy Nix package generation from URLs
+  nixd # Nix language server
   upkgs.devbox
   adwaita-icon-theme
   gtk3
@@ -100,14 +101,13 @@
   #== Desktop applications ==#
   (blender.override { cudaSupport = true; }) #@
   cava
-  firefox
   chromium
   tor-browser
   keepass
   imagemagick
   obs-studio
   obsidian
-  okular
+  libsForQt5.okular
   xournalpp
   youtube-music
   vlc
@@ -122,7 +122,7 @@
   pipx
   traceroute
   dnsmasq
-  ventoy
+  #- ventoy
   progress
   rpi-imager
   nmap

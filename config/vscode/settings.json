@@ -17,7 +17,8 @@
   "files.associations": {
     "*.js": "javascript",
     ".greeble": "coffeescript",
-    "*.y": "yacc"
+    "*.y": "yacc",
+    "*.html": "html"
   },
 
   // "workbench.list.keyboardNavigation": "highlight", // Old
@@ -112,7 +113,6 @@
     }
   },
   "workbench.iconTheme": "catppuccin-mocha",
-  "glassit.alpha": 255,
 
   //========== Languages ==========//
   // Blender
@@ -371,7 +371,7 @@
     "/tmp/postman-http-request-post-response.instructions.md": true,
     "/tmp/postman-http-request-pre-request.instructions.md": true
   },
-  "mdb.mcp.server": "enabled",
+  "mdb.mcp.server": "prompt",
   "workbench.editor.pinnedTabsOnSeparateRow": true,
   "terminal.integrated.stickyScroll.enabled": false
 

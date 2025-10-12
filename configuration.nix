@@ -282,6 +282,11 @@
     # auraConfig
   };
 
+  #=============== N8N ==============#
+  services.n8n = {
+    enable = true;
+  };
+
 
   #=============== USER ACCOUNTS ==============#
   # Define a user account. Don't forget to set a password with ‘passwd’.

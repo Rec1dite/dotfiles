@@ -79,14 +79,14 @@
   },
   // Align by regex
   {
-  "key": "shift+alt+a",
-  "command": "-align.by.regex",
-  "when": "editorHasSelection"
+    "key": "shift+alt+a",
+    "command": "-align.by.regex",
+    "when": "editorHasSelection"
   },
   {
-  "key": "alt+a",
-  "command": "align.by.regex",
-  "when": "editorHasSelection"
+    "key": "alt+a",
+    "command": "align.by.regex",
+    "when": "editorHasSelection"
   },
 
   //===== VIEWS & PANELS =====//
@@ -395,6 +395,20 @@
     "key": "ctrl+shift+d",
     "command": "-workbench.view.debug",
     "when": "viewContainer.workbench.view.debug.enabled && variablesFocused"
+  },
+
+  //===== TERMINAL EDITOR =====//
+  // Restore Unix terminal shortcuts functionality in terminal
+  // See [https://stackoverflow.com/a/59010893]
+  {
+    "key": "ctrl+k",
+    "command": "deleteAllRight",
+    "when": "terminalFocus"
+  },
+  {
+    "key": "ctrl+e",
+    "command": "cursorEnd",
+    "when": "terminalFocus"
   },
 
   //===== TERMINAL TABS =====//
@@ -912,5 +926,5 @@
     "key": "escape",
     "command": "-aws.amazonq.rejectCodeSuggestion",
     "when": "aws.codewhisperer.connected && inlineSuggestionVisible && !editorReadonly"
-  },
+  }
 ]
